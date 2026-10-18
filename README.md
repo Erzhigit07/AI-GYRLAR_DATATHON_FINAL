@@ -26,7 +26,7 @@
 
 Это инструмент поддержки специалиста. Обнаруженное моделью событие требует проверки человеком; отсутствие срабатываний не подтверждает соблюдение всех правил.
 
-> **О репозитории.** Здесь находится страница конкурсного проекта. Реализация и технические отчёты опубликованы в [основном репозитории][source]. Ссылки на код и результаты ниже закреплены за версией `8d5972f`, чтобы описание оставалось проверяемым. Они не включают последующие локальные доработки.
+> **О репозитории.** Здесь опубликован актуальный снимок реализации: API, интерфейс, Explainable AI, тесты, конфигурация рабочего Qwen и отчёты. Обученные QLoRA-адаптеры находятся в [Releases](https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/releases/tag/models-20261018). Приватные конкурсные записи, кадры и ключи не публикуются.
 
 <a id="demo"></a>
 ## Демо для жюри
@@ -37,7 +37,7 @@
 | API base URL | `https://greatest-leu-responses-dictionaries.trycloudflare.com` |
 | Проверка готовности | [`GET /healthz`][health] |
 | Авторизация | Ключ команды: поле входа в интерфейсе или заголовок `X-API-Key` |
-| Версия исходников | [`8d5972fcfb8d728603f73ecdcaeb7c37f75a461e`][source] |
+| Версия исходников | Актуальный снимок в ветке [`main`][source]; история исходного проекта сохранена в документации |
 
 Ключ передаётся жюри отдельно и не публикуется в репозитории.
 
@@ -136,6 +136,8 @@ HTTP `401` означает отсутствие или ошибку ключа,
 <a id="results"></a>
 ## Результаты, которые можно проверить
 
+**Исходная разметка больше не считается достоверной.** Следующая таблица сохранена исключительно как история эксперимента и не доказывает текущее качество. Для актуальной оценки используем только ручные метки пользователя.
+
 Ниже — **историческое сравнение двух baseline-конфигураций на одних и тех же 32 development-видео**: 17 положительных и 15 отрицательных. Все 32 видео обработаны полностью в обоих запусках.
 
 | Конфигурация | TP / TN / FP / FN | Accuracy | Precision | Recall | F1 | Весь запуск |
@@ -157,15 +159,26 @@ HTTP `401` означает отсутствие или ошибку ключа,
 
 Эти запуски проверяют интеграцию и отдельные времена ответа. Они не являются новым тестом точности, гарантией скорости на любых видео или подтверждением текущей доступности демо.
 
+## Актуальные дополнения · 18 октября 2026
+
+- **Explainable AI:** `GET /api/v1/jobs/{job_id}/explanation` возвращает сработавшие окна, правило агрегации и настоящие кадры до / в момент / после события. Это проверяемый след обработки и объяснение результата, а не доступ к внутренним рассуждениям модели. [Контракт](docs/forte_explainability.md).
+- **Ручные примеры:** `/api/v1/examples` и связанные маршруты поддерживают демонстрации по разметке человека с явным `model_generated: false`. Приватные записи не входят в Git; на чистой установке примеры отключены. [Подготовка](scripts/prepare_manual_examples.py).
+- **Дообучение на ручных метках:** выбран адаптер эпохи 3. На validation: 6/8, accuracy 0,75; на ранее отложенных 8 видео: 5/8, accuracy 0,625, F1 0,769 — столько же, сколько у base и первого адаптера. **Улучшение на этой проверке не подтверждено**, выборка уже раскрыта и не является независимым финальным тестом. [Отчёт](reports/forte_qwen_manual_check.json).
+- **В сервисе:** базовый Qwen3-VL-2B GGUF, два сценария; обученные бинарные адаптеры не подменяют рабочую модель. Контракт поддерживает расширенный каталог, но надёжное распознавание всех 11 типов не подтверждено.
+- **Последняя проверка живого API:** один выбранный пример с событием — 66,047 с, второй без события — 25,421 с; XAI доступен у обоих. Это проверка работы, а не оценка точности. [Отчёт](reports/forte_model_restart_check.json).
+
+### Веса и воспроизводимость
+
+В [релизе моделей](https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/releases/tag/models-20261018) находятся оба обученных адаптера, их конфигурации, выполненный код обучения, агрегированные отчёты и SHA-256. Для загрузки адаптеров используется отдельное CUDA-окружение из `requirements-qwen-finetune.txt`; они не являются готовыми GGUF-файлами. Базовая модель и vision projection скачиваются через `scripts/download_forte_runtime.py`, поэтому гигабайтные публичные веса не дублируются в Git.
+
 <a id="setup"></a>
 ## Локальная установка
 
-Исходный код находится в основном репозитории. Для описанной здесь версии:
+Склонируйте этот репозиторий:
 
 ```bash
-git clone https://github.com/Erzhigit07/Datathon-AI-GYRLAR.git
-cd Datathon-AI-GYRLAR
-git checkout 8d5972fcfb8d728603f73ecdcaeb7c37f75a461e
+git clone https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL.git
+cd AI-GYRLAR_DATATHON_FINAL
 ```
 
 **Windows · PowerShell · Python 3.12**
@@ -178,7 +191,13 @@ $python = (Resolve-Path .venv-forte/Scripts/python.exe).Path
 & $python -m pip install -r requirements-forte-service.txt
 ```
 
-> **Важно для воспроизведения:** Git-репозиторий не содержит полного локального deployment. Конфигурация сервиса ссылается на файлы в `outputs/`: настройки эксперимента, runtime, веса модели, манифесты SHA и сохранённые runner/parser. Их нужно подготовить по [инструкции сервиса][service-docs] и проверить пути. Одного `git clone` и установки Python-зависимостей недостаточно для запуска Qwen.
+Загрузите базовые веса и Windows Vulkan runtime из закреплённых официальных источников (около 1,6 ГБ). Скрипт проверяет SHA-256 каждого файла. Приватные данные ему не нужны:
+
+```powershell
+& $python scripts/download_forte_runtime.py
+```
+
+Готовые prompt, правила и сохранённые runner/parser находятся в `configs/forte_deployment/`. По умолчанию выбран `Vulkan1`, как на проверенном ноутбуке. На другом компьютере сначала запустите `outputs/forte-local/20261017-qwen/compact/runtime/llama-server.exe --list-devices`, затем укажите доступный GPU в обоих параметрах `--device` и `--mmproj-device` в `configs/forte_deployment/config.json`. Это проверенный Windows-путь; запуск модели на других ОС отдельно не проверялся.
 
 После подготовки этих файлов:
 
@@ -187,7 +206,7 @@ $python = (Resolve-Path .venv-forte/Scripts/python.exe).Path
 & $python -m src.forte.service --config configs/forte_service.example.json
 ```
 
-Проверка `--check` должна завершиться успешно до запуска. Затем откройте `http://127.0.0.1:8000` и используйте локальный ключ оператора. Для доступа извне предусмотрена отдельная [инструкция HTTPS-туннеля][tunnel-docs].
+Проверка `--check` должна завершиться успешно до запуска. Затем откройте `http://127.0.0.1:8000` и используйте локальный ключ оператора, который сервис создаёт в `outputs/forte-service/operator-key.txt`. Для доступа извне предусмотрена отдельная [инструкция HTTPS-туннеля][tunnel-docs].
 
 <details>
 <summary><b>Проверки кода без конкурсных данных и без запуска Qwen</b></summary>
@@ -211,7 +230,7 @@ git diff --check
 <a id="code"></a>
 ## Где искать реализацию
 
-Пути относятся к [основному репозиторию][source].
+Пути относятся к этому репозиторию.
 
 ```text
 src/forte/
@@ -255,10 +274,10 @@ reports/               Сводные результаты и ограничен
 
 [demo]: https://greatest-leu-responses-dictionaries.trycloudflare.com/
 [health]: https://greatest-leu-responses-dictionaries.trycloudflare.com/healthz
-[source]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/tree/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e
-[api-docs]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/docs/forte_local.md
-[service-docs]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/docs/forte_service.md
-[tunnel-docs]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/docs/forte_tunnel.md
-[comparison]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/reports/forte_overlap_comparison.json
-[experiments]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/reports/experiments.csv
-[finetune]: https://github.com/Erzhigit07/Datathon-AI-GYRLAR/blob/8d5972fcfb8d728603f73ecdcaeb7c37f75a461e/reports/forte_qwen_finetune_check.json
+[source]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/tree/main
+[api-docs]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/docs/forte_local.md
+[service-docs]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/docs/forte_service.md
+[tunnel-docs]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/docs/forte_tunnel.md
+[comparison]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/reports/forte_overlap_comparison.json
+[experiments]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/reports/experiments.csv
+[finetune]: https://github.com/Erzhigit07/AI-GYRLAR_DATATHON_FINAL/blob/main/reports/forte_qwen_finetune_check.json

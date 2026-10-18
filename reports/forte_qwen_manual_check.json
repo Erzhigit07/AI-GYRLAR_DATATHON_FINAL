@@ -1,0 +1,152 @@
+{
+  "experiment_id": "20261018-qwen2b-manual-labels",
+  "status": "FINISHED",
+  "model_weights_trained": true,
+  "label_authority": "user_manual",
+  "selected_epoch": 3,
+  "selection_rule": "F1, accuracy, fewer FP, earlier epoch",
+  "training": {
+    "status": "TRAINED",
+    "global_steps": 114,
+    "training_sec": 877.3252517279999,
+    "metrics": {
+      "train_runtime": 877.115,
+      "train_samples_per_second": 0.499,
+      "train_steps_per_second": 0.13,
+      "train_loss": 0.18016729693198086,
+      "epoch": 6.0
+    },
+    "gpu_peak_gib": 16.269302368164062
+  },
+  "configuration": {
+    "base_model": "Qwen/Qwen3-VL-2B-Instruct",
+    "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+    "seed": 2026,
+    "epochs": 6.0,
+    "max_steps": -1,
+    "microbatch": 1,
+    "gradient_accumulation": 4,
+    "learning_rate": 0.0001,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "prompt": "Кадры из одного фрагмента камеры банковской кассы идут по порядку времени. Определи, видно ли нарушение правил кассового обслуживания. Например: деньги предыдущего клиента остались открытыми при обслуживании следующего; кассир оставил рабочее место во время обслуживания клиента. Учитывай последовательность действий, присутствие клиента и обращение с деньгами. Ответь только одной цифрой: 1 — нарушение видно, 0 — нарушение не видно.",
+    "train_sha256": "29f80e70dfb674ad97c5109b1692220500219a15d8700d83dbbec6fda108d520",
+    "validation_sha256": "0643194944c521eab1f4b897761cf85b6fb876f948ff94421b3450a0e932610d",
+    "provenance_sha256": "96015fb72d88ce9943d942154ee70364cb6ccf7d7a0f8f5523f91c2aff0ebc69",
+    "gpu": "NVIDIA L40S",
+    "versions": {
+      "torch": "2.8.0+cu126",
+      "transformers": "4.57.6",
+      "peft": "0.17.1",
+      "accelerate": "1.11.0",
+      "bitsandbytes": "0.48.1"
+    }
+  },
+  "validation": {
+    "base": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 0,
+      "FP": 3,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.625,
+      "precision_complete_only": 0.625,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.7692307692307693,
+      "correct_per_attempted": 0.625
+    },
+    "previous": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 0,
+      "FP": 3,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.625,
+      "precision_complete_only": 0.625,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.7692307692307693,
+      "correct_per_attempted": 0.625
+    },
+    "epoch3": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 1,
+      "FP": 2,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.75,
+      "precision_complete_only": 0.7142857142857143,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.8333333333333334,
+      "correct_per_attempted": 0.75
+    },
+    "epoch6": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 1,
+      "FP": 2,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.75,
+      "precision_complete_only": 0.7142857142857143,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.8333333333333334,
+      "correct_per_attempted": 0.75
+    }
+  },
+  "holdout": {
+    "base": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 0,
+      "FP": 3,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.625,
+      "precision_complete_only": 0.625,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.7692307692307693,
+      "correct_per_attempted": 0.625
+    },
+    "previous": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 0,
+      "FP": 3,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.625,
+      "precision_complete_only": 0.625,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.7692307692307693,
+      "correct_per_attempted": 0.625
+    },
+    "epoch3": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 5,
+      "TN": 0,
+      "FP": 3,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.625,
+      "precision_complete_only": 0.625,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.7692307692307693,
+      "correct_per_attempted": 0.625
+    }
+  },
+  "conclusion": "No improvement on the frozen 8-video holdout; do not promote based on validation gain alone.",
+  "holdout_improvement_demonstrated": false,
+  "publication_note": "Aggregate public report; private per-video annotations, account metadata and local paths omitted. Full report remains with the team.",
+  "independent_final_test": false,
+  "api_deployed": false
+}

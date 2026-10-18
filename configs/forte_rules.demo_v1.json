@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "ruleset_id": "manual-demo-three-v1",
+  "source_kind": "user_manual_annotation",
+  "scope_note": "Демонстрация трёх типов из ручной разметки: открытый сейф, незакрытая дверь кассовой зоны и верхняя одежда сотрудника. Остальные типы сейчас не проверяются. Результат требует просмотра человеком. Это пользовательские критерии, а не подтверждённое юридическое заключение.",
+  "detection_rules": [
+    {
+      "rule_id": "safe_left_open",
+      "enabled": true,
+      "title": "Сейф оставлен открытым",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "The safe door is visibly open and remains open after the cashier finishes accessing it and moves away or resumes another activity. Track the safe door, not the room entrance.",
+      "exclude": "Opening a safe to actively deposit or withdraw cash is normal. A closed safe does not establish whether it is locked. Do not guess an obscured door state."
+    },
+    {
+      "rule_id": "access_door_left_open",
+      "enabled": true,
+      "title": "Дверь кассовой зоны не закрыта после прохода",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "A person passes through the access door to the cashier area and moves away, while the door visibly remains open after passage. Distinguish the entrance door from the safe door.",
+      "exclude": "The transient open state while passing through is normal. Do not flag when the person closes the door behind them or it visibly closes automatically. Do not infer whether a closed door is locked."
+    },
+    {
+      "rule_id": "outerwear_in_cash_area",
+      "enabled": true,
+      "title": "Вход сотрудника в кассовую зону в верхней одежде",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "A person visibly enters or occupies the staff side of the cashier workstation wearing recognizable outdoor outerwear such as a coat or outdoor jacket.",
+      "exclude": "Do not classify a customer outside the staff area, a carried garment, or an ordinary shirt, blouse, cardigan or business blazer as this event. If clothing or area boundaries cannot be distinguished, do not guess."
+    }
+  ]
+}

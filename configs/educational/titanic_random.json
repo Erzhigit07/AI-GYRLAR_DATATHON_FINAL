@@ -1,0 +1,57 @@
+{
+  "data_path": "data/raw/titanic/train.csv",
+  "dataset_label": "EDUCATIONAL ONLY — Kaggle Titanic official train.csv; SHA-256 recorded per run",
+  "task": "classification",
+  "target": "Survived",
+  "features": [
+    "Pclass",
+    "Sex",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Fare",
+    "Embarked"
+  ],
+  "id_column": "PassengerId",
+  "validation": "random",
+  "group_column": null,
+  "time_column": null,
+  "validation_size": 0.2,
+  "seed": 42,
+  "metrics": [
+    "accuracy",
+    "precision",
+    "recall",
+    "f1"
+  ],
+  "average": "binary",
+  "positive_label": 1,
+  "models": [
+    "linear",
+    "random_forest",
+    "catboost"
+  ],
+  "model_params": {
+    "linear": {
+      "C": 1,
+      "max_iter": 2000
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "min_samples_leaf": 2
+    },
+    "catboost": {
+      "iterations": 300,
+      "depth": 5,
+      "learning_rate": 0.05
+    }
+  },
+  "read_options": {
+    "dtype": {
+      "Pclass": "string",
+      "Ticket": "string"
+    }
+  },
+  "output_dir": "outputs/educational/titanic/random",
+  "data_kind": "real"
+}

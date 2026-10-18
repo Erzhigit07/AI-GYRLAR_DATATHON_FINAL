@@ -1,0 +1,179 @@
+{
+  "experiment_id": "20261018-qwen2b-qlora-pilot",
+  "status": "FINISHED_NO_CLIP_LEVEL_IMPROVEMENT",
+  "model_weights_trained": true,
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "base_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "lora_trainable_parameters": 17432576,
+  "training": {
+    "status": "TRAINED",
+    "global_steps": 57,
+    "training_sec": 443.44869894399994,
+    "metrics": {
+      "train_runtime": 443.246,
+      "train_samples_per_second": 0.501,
+      "train_steps_per_second": 0.129,
+      "train_loss": 0.24133751748881319,
+      "epoch": 3.0
+    },
+    "gpu_peak_gib": 16.269439697265625
+  },
+  "paired_validation": {
+    "status": "FINISHED",
+    "same_loaded_model_and_precision": true,
+    "base": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 4,
+      "TN": 0,
+      "FP": 4,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.5,
+      "precision_complete_only": 0.5,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.6666666666666666,
+      "correct_per_attempted": 0.5
+    },
+    "adapter": {
+      "videos": 8,
+      "complete": 8,
+      "TP": 4,
+      "TN": 0,
+      "FP": 4,
+      "FN": 0,
+      "coverage": 1.0,
+      "accuracy_complete_only": 0.5,
+      "precision_complete_only": 0.5,
+      "recall_complete_only": 1.0,
+      "f1_complete_only": 0.6666666666666666,
+      "correct_per_attempted": 0.5
+    },
+    "base_wall_sec": 130.2152569970001,
+    "adapter_wall_sec": 141.45202221900013,
+    "validation_sha256": "6f3fac60da05f5d9e8fc41090328ff4f7131765cb4fe8382b9e9430fd7c48fd0",
+    "scope": "Internal validation8; only LoRA enable/disable differs",
+    "note": "Original before pass preceded PEFT dtype preparation; use this comparison."
+  },
+  "window_diagnostics": {
+    "paired_base": {
+      "negative_windows": 27,
+      "false_positive_windows": 27,
+      "completed_windows": 57
+    },
+    "paired_adapter": {
+      "negative_windows": 27,
+      "false_positive_windows": 23,
+      "completed_windows": 57
+    }
+  },
+  "serialization_verification": {
+    "status": "PASS",
+    "scope": "One fixed validation window; serialization smoke, not an accuracy score",
+    "window_id": "video_06_w000",
+    "same_prediction_after_reload": true,
+    "adapter_weights_finite": true,
+    "lora_B_weights_changed": true,
+    "adapter_sha256": "1281655e4fe13727b3ba23ef095b5a821af275eed346dd9529a2a5dde8eb3d27",
+    "execution_source_sha256": "3b1b7844a8a0fae552f41d78d50583424c41e3936c3b57a9fdf9f6ce68f2a7a1"
+  },
+  "local_artifact_verification": {
+    "status": "PASS",
+    "files_verified": 34,
+    "archive_sha256": "92f1bf8d5b69f1c0e74d0aefca24d427f27a8d697900cc0c61683df7db8e3ad2",
+    "cloud_metadata_completed_utc": "2026-10-18T01:49:02.641625+00:00",
+    "matched_remote_checksum": true,
+    "paired_negative_window_diagnostics": {
+      "paired_base": {
+        "negative_windows": 27,
+        "false_positive_windows": 27,
+        "completed_windows": 57
+      },
+      "paired_adapter": {
+        "negative_windows": 27,
+        "false_positive_windows": 23,
+        "completed_windows": 57
+      }
+    }
+  },
+  "cloud_instance": "qfdqw0gy1",
+  "cloud_status": "DELETED",
+  "api_model_changed": false,
+  "api_restored_pid": 22496,
+  "versions": {
+    "torch": "2.8.0+cu126",
+    "transformers": "4.57.6",
+    "peft": "0.17.1",
+    "accelerate": "1.11.0",
+    "bitsandbytes": "0.48.1"
+  },
+  "artifact_directory": "outputs\\qwen_finetune\\20261018\\export\\run_01",
+  "limitations": [
+    "Binary-only pilot; no event types, temporal intervals or explanations trained.",
+    "Validation8 is from previously inspected development32, with exact-source grouping only.",
+    "Eight final holdout videos not decoded or uploaded.",
+    "Initial before/after differs in frozen weight precision. Use paired_base/paired_adapter from the same reloaded model.",
+    "Window observations are correlated within video; no clip-level improvement demonstrated."
+  ],
+  "next_step": "Human-review false positives and event intervals/types, group related recording sessions, then freeze a new experiment.",
+  "data_preparation_snapshot": {
+    "status": "PREPARED_NOT_TRAINED",
+    "seed": 2026,
+    "manifest_sha256": "cbec03b42b2be751049e4217b2f9dbea271f4ff8feaf5caef5ce4704cdd7f295",
+    "train_videos": 24,
+    "validation_videos": 8,
+    "train_class_counts": {
+      "1": 13,
+      "0": 11
+    },
+    "validation_class_counts": {
+      "0": 4,
+      "1": 4
+    },
+    "train_windows": 74,
+    "validation_windows": 57,
+    "holdout_media_read": false,
+    "model_weights_trained": false,
+    "sampling": {
+      "step_sec": 0.5,
+      "frames_per_window": 16,
+      "validation_stride": 8
+    },
+    "limitations": [
+      "Weak positive windows derived from point annotations; event type is unknown.",
+      "No negative labels assigned to unannotated windows from positive training clips.",
+      "Validation labels are video-level ONLY, never used as per-window targets.",
+      "Related cameras/sessions have not been manually grouped; exact duplicates excluded.",
+      "Development previously inspected; validation is internal, not an independent final test.",
+      "Binary pilot cannot replace the API event explanation contract."
+    ]
+  },
+  "data_preparation_snapshot_note": "Snapshot recorded before training; final training status is in the top-level training field.",
+  "api_health_check": {
+    "local_status": 200,
+    "public_status": 200,
+    "model_ready": true
+  },
+  "report_updated_utc": "2026-10-18T02:14:33.078657+00:00",
+  "cloud_cleanup": {
+    "compute_stop_verified": true,
+    "deletion_authorized": true,
+    "deletion_requested": true,
+    "local_adapter_sha256_rechecked": "1281655e4fe13727b3ba23ef095b5a821af275eed346dd9529a2a5dde8eb3d27",
+    "local_api_health": {
+      "status": 200,
+      "model_ready": true
+    },
+    "deletion_verified": true,
+    "verification_ui": "No compute resources",
+    "recurring_compute_and_storage_charges_stopped": true,
+    "proof_image": "outputs/qwen_finetune/20261018/cloud_deleted.png"
+  },
+  "billing_snapshot": {
+    "new_instance_total_usd": 0.17,
+    "previous_instance_total_usd": 1.13,
+    "account_balance_usd": 48.68,
+    "final_cost_confirmed": false,
+    "note": "UI snapshot during cleanup; billing may not yet include all elapsed usage."
+  }
+}

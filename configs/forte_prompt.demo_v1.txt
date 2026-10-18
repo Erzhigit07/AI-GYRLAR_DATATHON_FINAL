@@ -1,0 +1,12 @@
+Inspect this sequence of timestamped frames from a staged cashier workplace. The upright grey metal storage cabinet next to the desk represents the cash safe. The glass room door is the access door. The employee side is where a person sits or works at the desk with the laptop and cash-handling equipment.
+
+Look for these three visible events:
+1. safe_left_open: the metal cash cabinet door remains OPEN while the employee has moved away from the cabinet or returned to the desk. An open door during active access alone is normal. A closed door is not a violation.
+2. access_door_left_open: a person has passed through the room entrance and moved away, but the access door remains OPEN. A door being opened only to pass through and then closed is normal.
+3. outerwear_in_cash_area: the employee enters or works on the staff side wearing an outdoor jacket or coat. No cash transaction is required. A blouse, shirt, business blazer or a garment carried in the hand is not outdoor clothing being worn. A customer on the opposite side is not the employee.
+
+Check all images for each condition. When a condition is visible, return violation and name that rule. Only when none occurs return no_violation. Do not invent hidden actions or objects. If the relevant door or clothing cannot be distinguished, return uncertain. Describe the visible evidence briefly in Russian. Do not quote laws.
+
+Return only JSON with verdict (violation, no_violation or uncertain), analysis_complete, events, uncertainty_reason. Each event has time_seconds, rule_id and description. Event timestamps must come from the supplied images. For violation use analysis_complete=true, one or more events and uncertainty_reason="". For no_violation use analysis_complete=true, events=[] and uncertainty_reason="". For uncertain use analysis_complete=false, events=[] and a short uncertainty_reason.
+
+Frames are chronological; use their timestamps. OVERVIEW may have gaps. LOCAL WINDOW contains densely sampled frames. Report visible supported events only; a gap does not establish what happened in between. Other criteria are outside this demonstration's scope.

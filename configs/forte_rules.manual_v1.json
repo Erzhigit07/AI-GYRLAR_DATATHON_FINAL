@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "ruleset_id": "manual-observable-types-v1",
+  "source_kind": "user_manual_annotation",
+  "scope_note": "Проверяются 11 типов наблюдаемых ситуаций из ручной разметки пользователя. Это пользовательские критерии для проверки человеком; их юридическая применимость не установлена. Отсутствие срабатываний не подтверждает соблюдение всех правил.",
+  "detection_rules": [
+    {
+      "rule_id": "cash_before_identity_check",
+      "enabled": true,
+      "title": "Приём денег без видимой предварительной проверки документов",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "See the customer approach and the start of the transaction, then the cashier accepts or begins counting the customer's cash or cash bag without first visibly inspecting the customer's identity document. Require the start-to-handover sequence; place the event at the acceptance/counting.",
+      "exclude": "Do not flag when an identity document was visibly inspected first, or when the supplied sequence starts after a possible check. An indistinct small object is not proof of either checking or omission. Do not infer database checks or document contents."
+    },
+    {
+      "rule_id": "cash_not_secured_after_operation",
+      "enabled": true,
+      "title": "Деньги или денежный мешок не убраны в сейф после операции",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "Cash or a cash bag is visibly handled, the current cash operation visibly ends or the cashier turns to a subsequent operation, but that cash remains on the desk outside the safe. Require the transition away from active handling of that cash.",
+      "exclude": "Cash on the desk during active receipt, counting, checking or giving change is normal. A bag alone does not prove cash contents. If the cashier leaves with cash exposed use cash_left_unattended; if the cashier stays and starts an unrelated activity use other_activity_with_unsecured_cash."
+    },
+    {
+      "rule_id": "active_laptop_left_unattended",
+      "enabled": true,
+      "title": "Уход с оставленным включённым ноутбуком",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "The cashier visibly leaves the workstation while the open laptop screen remains visibly active. Require a before/after departure sequence and visible screen state. Describe only the visible active screen.",
+      "exclude": "An open lid alone does not establish an active or unlocked session. A screen put to sleep or visibly closed before leaving is not this event. Do not claim authentication or lock status from appearance alone."
+    },
+    {
+      "rule_id": "safe_key_left_unattended",
+      "enabled": true,
+      "title": "Ключ от сейфа оставлен при уходе",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "Track a visibly identifiable key used with the safe or remaining in its lock. The cashier leaves and the same key remains in the lock or at the unattended workstation instead of being taken along.",
+      "exclude": "Do not identify any small desk object as a safe key without visual support. No event when the cashier visibly takes the key. A closed door alone says nothing about key location or lock state."
+    },
+    {
+      "rule_id": "cash_stored_without_visible_check",
+      "enabled": true,
+      "title": "Деньги положены в сейф без видимой проверки",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "See the start of handling received cash and the subsequent direct placement in the safe without an intervening visible inspection, count or checking-device use. Locate the event at placement into the safe.",
+      "exclude": "Do not flag money visibly checked or counted before storage. Frames that start after a possible check or have a gap hiding the relevant action do not establish omission. Do not assert currency authenticity or the result of an invisible check."
+    },
+    {
+      "rule_id": "safe_left_open",
+      "enabled": true,
+      "title": "Сейф оставлен открытым",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "The safe door is visibly open and remains open after the cashier finishes accessing it and moves away or resumes another activity. Track the safe door, not the room entrance.",
+      "exclude": "Opening a safe to actively deposit or withdraw cash is normal. A closed safe does not establish whether it is locked. Do not guess an obscured door state."
+    },
+    {
+      "rule_id": "documents_left_unattended",
+      "enabled": true,
+      "title": "Документы оставлены на столе при уходе",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "Documents/papers visibly handled at the workstation remain exposed on the desk when the cashier leaves. Require visible papers and a departure sequence.",
+      "exclude": "Papers during active service are normal. No event if they are put into storage before departure. Do not invent contents, personal details or document ownership."
+    },
+    {
+      "rule_id": "cash_left_unattended",
+      "enabled": true,
+      "title": "Деньги оставлены на столе без присмотра",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "Visible cash remains outside the safe on the desk while the cashier departs from the workstation. Track the cash before and after departure.",
+      "exclude": "Standing to reach nearby equipment while continuing the operation is not departure. No event if the cash is visibly secured before leaving. Do not call an unidentifiable desk object banknotes."
+    },
+    {
+      "rule_id": "access_door_left_open",
+      "enabled": true,
+      "title": "Дверь кассовой зоны не закрыта после прохода",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "A person passes through the access door to the cashier area and moves away, while the door visibly remains open after passage. Distinguish the entrance door from the safe door.",
+      "exclude": "The transient open state while passing through is normal. Do not flag when the person closes the door behind them or it visibly closes automatically. Do not infer whether a closed door is locked."
+    },
+    {
+      "rule_id": "outerwear_in_cash_area",
+      "enabled": true,
+      "title": "Вход сотрудника в кассовую зону в верхней одежде",
+      "source": "Ручная разметка пользователя",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "A person visibly enters or occupies the staff side of the cashier workstation wearing recognizable outdoor outerwear such as a coat or outdoor jacket.",
+      "exclude": "Do not classify a customer outside the staff area, a carried garment, or an ordinary shirt, blouse, cardigan or business blazer as this event. If clothing or area boundaries cannot be distinguished, do not guess."
+    },
+    {
+      "rule_id": "other_activity_with_unsecured_cash",
+      "enabled": true,
+      "title": "Постороннее занятие при неубранных в сейф деньгах",
+      "source": "Ручная разметка пользователя; уточнение про постороннее занятие при неубранных деньгах",
+      "source_kind": "user_manual_annotation",
+      "clause": "",
+      "observable_predicate": "Cash visibly remains on the desk outside the safe after handling it, and the cashier stops the cash operation to engage in an unrelated personal activity, for example drinking coffee. Both the unsecured cash and the change of activity must be visible in sequence.",
+      "exclude": "Drinking coffee alone is not this event. Ordinary counting, checking, document handling, working on transaction equipment, or briefly putting a phone away to resume the cash operation are not sufficient. If the cashier leaves altogether use cash_left_unattended."
+    }
+  ]
+}

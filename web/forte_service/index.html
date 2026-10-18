@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Видеоаудит Forte — конкурсный проект AI GYRLAR</title>
+  <meta name="description" content="Проверка видео, события и кадры для ручного просмотра.">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #242126;
+      --muted: #706970;
+      --line: #e6e2e5;
+      --paper: #ffffff;
+      --bg: #ffffff;
+      --brand: #87234d;
+      --brand-dark: #6d193b;
+      --soft: #f7eaf0;
+      --warn: #955c19;
+      --warn-bg: #fcf2e5;
+      --danger: #a33644;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 Inter,"Segoe UI",Arial,sans-serif; }
+    .icon-sprite { display: none; }
+    .icon { width: 17px; height: 17px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    button, input { font: inherit; }
+    button, a, input { touch-action: manipulation; }
+    button { cursor: pointer; border-radius: 8px; border: 1px solid var(--line); background: white; padding: 10px 13px; font-weight: 500; color: var(--ink); }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+    button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid #b85580; outline-offset: 4px; }
+    button:hover:not(:disabled) { background: var(--soft); }
+    .primary { background: var(--brand); border-color: var(--brand); color: white; }
+    .primary:hover:not(:disabled) { background: var(--brand-dark); }
+    [hidden] { display: none !important; }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+    .top { border-bottom: 1px solid var(--line); background: #fff; }
+    .top-inner { min-height: 76px; padding-top: 18px; padding-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .brand { display: flex; gap: 23px; align-items: center; }
+    .forte-wordmark { color: var(--brand); font-size: 31px; line-height: 1; letter-spacing: -1.8px; font-weight: 750; }
+    .brand-divider { width: 1px; height: 25px; background: var(--line); }
+    .brand strong { display: block; font-size: 14px; letter-spacing: -.2px; font-weight: 500; }
+    .eyebrow { color: var(--muted); font-size: 10px; letter-spacing: 1.7px; font-weight: 600; text-transform: uppercase; }
+    .health { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa2aa; flex-shrink: 0; }
+    .health[data-ready="true"] .dot { background: #388466; box-shadow: 0 0 0 3px #e3eee8; }
+    .intro { margin: 28px 0 27px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    h1 { font-size: 30px; line-height: 1.15; letter-spacing: -1.1px; margin: 8px 0 9px; font-weight: 600; }
+    .intro p { margin: 0; color: var(--muted); font-size: 13px; }
+    .badge { display: flex; align-items: center; gap: 7px; font-size: 12px; padding-bottom: 3px; white-space: nowrap; color: var(--muted); }
+    .workspace { display: grid; grid-template-columns: minmax(220px,.75fr) minmax(0,1.4fr); gap: 24px; align-items: stretch; }
+    .card { border: 1px solid var(--line); background: var(--paper); border-radius: 14px; }
+    .upload-panel, .results-panel { min-width: 0; padding: 22px; }
+    .section-label { display: flex; gap: 10px; align-items: center; margin-bottom: 21px; }
+    h2 { font-size: 16px; line-height: 1.4; margin: 0; font-weight: 600; letter-spacing: -.3px; }
+    .step { font-size: 12px; color: var(--brand); background: var(--soft); width: 25px; height: 25px; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; }
+    .field-label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+    .key-input { display: block; width: 100%; border: 1px solid #ded7de; border-radius: 12px; padding: 12px 13px; background: #fff; color: var(--ink); }
+    .key-input::placeholder { color: #9b919a; }
+    .hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+    .upload-area { border-radius: 8px; }
+    .upload-area.dragging { background: var(--soft); outline: 2px dashed var(--brand); outline-offset: 8px; }
+    .file-meta { display: flex; align-items: center; gap: 12px; margin: 20px 0; overflow-wrap: anywhere; }
+    .file-icon { display: flex; flex-shrink: 0; padding: 12px; border-radius: 11px; background: var(--soft); color: var(--brand); }
+    .file-meta strong { display: block; font-size: 14px; font-weight: 600; }
+    .file-meta small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .choose-video { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 39px; font-size: 12px; }
+    .upload-hint { text-align: center; font-size: 11px; }
+    .submit { display: block; width: 100%; margin-top: 16px; min-height: 39px; font-size: 12px; }
+    .login-card .submit { margin-top: 20px; min-height: 48px; font-size: 14px; }
+    .viewer { height: 227px; position: relative; background: #25282a; border-radius: 10px; overflow: hidden; color: #eae8e9; }
+    .viewer[data-sized="true"] { width: min(100%,calc(min(70vh,720px) * var(--media-ratio))); height: auto; aspect-ratio: var(--media-ratio); margin-inline: auto; }
+    .preview, video { width: 100%; height: 100%; display: block; background: #25282a; }
+    .preview { position: absolute; inset: 0; }
+    video { object-fit: contain; }
+    .video-empty { height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; text-align: center; padding: 24px; }
+    .video-empty .icon { width: 30px; height: 30px; margin-bottom: 5px; color: #aaa5aa; }
+    .video-empty strong { font-size: 13px; font-weight: 500; }
+    .video-empty span { font-size: 11px; color: #aaa5aa; }
+    .evidence-preview { position: absolute; inset: 0; margin: 0; }
+    .evidence-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .evidence-preview figcaption { position: absolute; bottom: 9px; left: 10px; right: 10px; width: fit-content; max-width: calc(100% - 20px); background: #25282ad9; color: white; border-radius: 4px; padding: 3px 7px; font-size: 10px; }
+    .player-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 11px 0 14px; color: var(--muted); font-size: 11px; }
+    .player-controls > span { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    #player-file { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #player-clock { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+    #preview-hint { font-size: 11px; margin: 0 0 14px; }
+    .alert { border: 1px solid #eed5c4; background: var(--warn-bg); color: var(--warn); border-radius: 12px; padding: 12px 14px; font-size: 13px; margin-top: 16px; }
+    .status-panel { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 24px; }
+    .status-label { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 6px; height: 6px; background: #aaa2aa; border-radius: 50%; }
+    .status-panel[data-done="true"] .status-dot { background: #357b59; }
+    .status-panel[data-spinning="true"] .status-dot { display: none; }
+    .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid #edd7e1; border-top-color: var(--brand); border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-detail { font-size: 12px; color: var(--muted); margin: 9px 0 0; }
+    .status-actions { margin-top: 12px; }
+    .status-actions button { padding: 8px 12px; font-size: 13px; }
+    .empty { padding: 19px 16px; border: 1px dashed var(--line); border-radius: 9px; text-align: center; }
+    .empty h3 { font-size: 13px; font-weight: 500; margin: 0 0 6px; }
+    .empty p { color: var(--muted); margin: 0; font-size: 11px; }
+    .verdict { background: var(--soft); border-radius: 10px; padding: 17px; margin-top: 27px; }
+    .verdict[data-kind="violation"] { background: var(--warn-bg); }
+    .verdict > .icon { color: var(--warn); margin-bottom: 10px; }
+    .verdict strong { font-size: 16px; line-height: 1.4; font-weight: 600; display: block; }
+    .verdict p { margin: 7px 0 0; font-size: 11px; color: var(--muted); }
+    .event-list { display: grid; gap: 9px; }
+    .event-button { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; border-radius: 9px; padding: 12px; }
+    .event-button[aria-pressed="true"] { background: var(--soft); border-color: #bf8ca2; }
+    .event-time { color: var(--brand); font-size: 11px; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+    .event-copy { min-width: 0; overflow-wrap: anywhere; }
+    .event-copy strong { display: block; font-size: 12px; font-weight: 600; line-height: 1.4; }
+    .event-copy small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 3px; }
+    .event-button > .icon { width: 14px; margin-left: auto; color: var(--muted); }
+    .description { font-size: 12px; margin: 11px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .source { font-size: 12px; color: var(--muted); margin: 10px 0 15px; overflow-wrap: anywhere; }
+    .frames { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 11px; }
+    .frame { margin: 0; min-width: 0; }
+    .frame button { display: block; padding: 0; width: 100%; border-radius: 12px; overflow: hidden; background: #242027; }
+    .frame img { display: block; width: 100%; height: 132px; object-fit: contain; }
+    .frame figcaption { margin-top: 6px; font-size: 12px; color: var(--muted); }
+    .scope { margin-top: 22px; }
+    .examples-panel { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .examples-panel h3 { font-size: 13px; font-weight: 600; margin: 0; }
+    .example-list { display: grid; gap: 8px; margin-top: 12px; }
+    .example-button { text-align: left; padding: 10px 12px; font-size: 12px; }
+    .example-button small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .example-button[aria-pressed="true"] { background: var(--soft); border-color: #bf8ca2; }
+    .result-source { width: fit-content; max-width: 100%; font-size: 11px; font-weight: 600; color: var(--brand); background: var(--soft); border-radius: 6px; padding: 5px 9px; margin: 0 0 14px; }
+    .scope summary { font-size: 11px; color: var(--muted); cursor: pointer; }
+    .scope-note { font-size: 11px; color: var(--muted); margin: 12px 0; }
+    .rules { display: grid; gap: 12px; }
+    .rule { font-size: 13px; border-top: 1px solid var(--line); padding-top: 12px; overflow-wrap: anywhere; }
+    .rule p { margin: 4px 0 0; font-size: 12px; color: var(--muted); }
+    footer { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 25px; color: var(--muted); font-size: 12px; }
+    .workspace-footer { padding: 22px 0; font-size: 11px; flex-wrap: wrap; gap: 12px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .header-actions, .session-controls { display: flex; align-items: center; gap: 16px; }
+    .session-controls button { font-size: 12px; padding: 7px 12px; border-radius: 9px; }
+    .session-label { color: var(--muted); font-size: 12px; }
+    .login-layout { min-height: 640px; padding: 72px 0; display: grid; grid-template-columns: 1.1fr 1fr; gap: 80px; align-items: center; }
+    .login-intro h1 { font-size: clamp(36px,4vw,52px); max-width: 520px; margin: 18px 0 22px; }
+    .login-intro > p { max-width: 410px; color: var(--muted); font-size: 16px; }
+    .login-features { display: grid; gap: 19px; padding: 0; list-style: none; margin: 34px 0 0; }
+    .login-features li { display: flex; gap: 13px; align-items: center; font-size: 13px; }
+    .feature-number { width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 9px; display: grid; place-items: center; color: var(--brand); font-size: 11px; }
+    .login-card { padding: 36px; max-width: 440px; width: 100%; justify-self: end; box-shadow: 0 8px 40px #30212a06; }
+    .login-mark { width: 46px; height: 46px; border-radius: 14px; background: var(--soft); color: var(--brand); display: grid; place-items: center; font-size: 21px; margin-bottom: 26px; }
+    .login-card h2 { font-size: 26px; }
+    .login-copy { color: var(--muted); font-size: 13px; margin: 10px 0 26px; }
+    .key-field { position: relative; }
+    .key-field .key-input { padding-right: 98px; min-height: 50px; }
+    .key-toggle { position: absolute; right: 5px; top: 5px; border: 0; background: transparent; padding: 10px; font-size: 12px; color: var(--brand); }
+    .key-input[aria-invalid="true"] { border-color: var(--danger); }
+    .login-error { color: var(--danger); font-size: 13px; margin: 10px 0 0; }
+    .login-note { font-size: 12px; color: var(--muted); margin: 22px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
+    .login-footer { border-top: 1px solid var(--line); padding-top: 22px; }
+    .access-status { display: flex; align-items: flex-start; gap: 9px; font-size: 12px; color: var(--muted); margin-top: 21px; }
+    .access-status small { display: block; font-size: 11px; margin-top: 2px; }
+    .xai-button { margin-top: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%; color: var(--brand); background: #fff; font-size: 12px; font-weight: 600; border-radius: 9px; padding: 12px; text-align: left; }
+    .xai-button span { margin-left: auto; color: var(--muted); font-size: 10px; font-weight: 400; }
+    .xai-dialog { width: min(770px,calc(100% - 32px)); max-height: calc(100% - 32px); padding: 25px; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: #fff; box-shadow: 0 20px 70px #1c0e2329; }
+    .xai-dialog::backdrop { background: #24121c55; }
+    .xai-header { display: flex; justify-content: space-between; gap: 14px; }
+    .xai-header .eyebrow { color: var(--brand); }
+    .xai-header h2 { margin-top: 10px; font-size: 24px; line-height: 1.25; letter-spacing: -.7px; }
+    .xai-header p { color: var(--muted); font-size: 12px; margin: 7px 0 0; }
+    .xai-header button { align-self: start; width: 32px; height: 32px; display: grid; place-items: center; flex-shrink: 0; padding: 0; font-size: 23px; color: var(--muted); }
+    .xai-content { padding: 20px 0 0; }
+    .xai-content .field-label { font-size: 11px; color: var(--muted); font-weight: 400; }
+    .xai-content select { font: inherit; font-size: 13px; color: var(--ink); background: #fff; min-width: 0; width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 11px 10px; }
+    .xai-columns { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 25px; margin-top: 22px; }
+    .xai-columns > * { min-width: 0; }
+    .xai-columns h3 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }
+    .xai-columns .frames { grid-template-columns: 1fr; }
+    .xai-columns .frame img { height: auto; max-height: 250px; }
+    .xai-columns .frames[data-context="true"] { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+    .xai-columns .frames[data-context="true"] .frame img { height: 155px; }
+    .xai-columns .frames[data-context="true"] figcaption { font-size: 10px; }
+    .xai-rule { font-size: 16px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+    .xai-limits { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+    .xai-limits ul { padding-left: 17px; color: var(--muted); font-size: 12px; }
+    .xai-limits li + li { margin-top: 8px; }
+    .confidence { font-size: 10px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 15px; margin-top: 20px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: space-between; }
+    .confidence strong { color: var(--ink); font-size: 11px; font-weight: 500; }
+    .xai-footer { padding: 18px 0 0; margin-top: 22px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+    .xai-footer .hint { max-width: 260px; font-size: 10px; }
+    .xai-footer button { font-size: 11px; flex-shrink: 0; }
+    #xai-source-details { border: 0; padding: 0; margin-top: 16px; font-size: 12px; color: var(--brand); }
+    .xai-footer p { margin: 0; max-width: 370px; }
+    select:focus-visible { outline: 3px solid #b85580; outline-offset: 4px; }
+    @media (max-width: 950px) {
+      .login-layout { gap: 35px; }
+      .login-card { padding: 28px; }
+      .session-label { display: none; }
+    }
+    @media (max-width: 700px) {
+      .login-layout { grid-template-columns: 1fr; gap: 28px; padding: 34px 0; min-height: auto; }
+      .login-intro h1 { font-size: 36px; margin: 10px 0 14px; }
+      .login-features { display: none; }
+      .login-card { justify-self: stretch; max-width: none; padding: 26px; }
+      .header-actions { flex-wrap: wrap; gap: 10px; }
+    }
+    @media (max-width: 800px) {
+      .intro .badge { display: none; }
+      .workspace { grid-template-columns: minmax(200px,.8fr) minmax(0,1.2fr); gap: 16px; }
+      .shell { padding: 0 20px; }
+      .top-inner { padding-top: 18px; padding-bottom: 18px; }
+      .intro { margin-top: 24px; }
+      .upload-panel, .results-panel { padding: 17px; }
+      .event-button { gap: 8px; padding: 11px 9px; }
+      .brand { gap: 14px; }
+      .xai-dialog { padding: 22px; }
+      .xai-header h2 { font-size: 22px; }
+    }
+    @media (max-width: 600px) {
+      .shell { padding: 0 16px; }
+      .top-inner { padding: 16px; flex-wrap: wrap; gap: 12px; }
+      .forte-wordmark { font-size: 27px; }
+      .brand strong { font-size: 12px; }
+      .intro { margin: 22px 0 20px; }
+      .intro h1 { font-size: 26px; }
+      .workspace { grid-template-columns: minmax(0,1fr); }
+      .viewer { height: 235px; }
+      .file-meta { margin: 12px 0; }
+      .status-panel { margin-top: 16px; padding-top: 16px; }
+      .xai-dialog { padding: 18px; }
+      .xai-columns { grid-template-columns: minmax(0,1fr); gap: 23px; }
+      .xai-header h2 { font-size: 20px; }
+      .xai-content { padding-top: 17px; }
+      .xai-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+      .xai-footer .hint { max-width: none; }
+      .login-footer { flex-wrap: wrap; }
+    }
+    @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+  </style>
+</head>
+<body>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="icon-video" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="14" rx="2"></rect><path d="m16 9 5-3v12l-5-3"></path></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path><path d="M14 2v6h6m-10 4 5 3-5 3Z"></path></symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"></path></symbol>
+    <symbol id="icon-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"></circle><path d="m12 12 9 9m-4-4 3-3m-6 0 3-3"></path></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 3 3 6v6c0 5 9 9 9 9s9-4 9-9V6ZM8 12l3 3 5-6"></path></symbol>
+    <symbol id="icon-scan" viewBox="0 0 24 24"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m8 0h4a1 1 0 0 0 1-1v-4M5 12s3-4 7-4 7 4 7 4-3 4-7 4-7-4-7-4Z"></path><circle cx="12" cy="12" r="1"></circle></symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></symbol>
+  </defs></svg>
+  <header class="top"><div class="shell top-inner">
+    <div class="brand"><span class="forte-wordmark">forte</span><span class="brand-divider" aria-hidden="true"></span><strong>Видеоаудит</strong></div>
+    <div class="header-actions"><div class="health" id="health" data-ready="false" role="status"><span class="dot" aria-hidden="true"></span><span id="health-text">Подключаемся к сервису</span></div><div class="session-controls" id="session-controls" hidden><span class="session-label">Доступ подтверждён</span><button type="button" id="logout">Выйти</button></div></div>
+  </div></header>
+  <main class="shell" id="login-screen">
+    <div class="login-layout">
+      <section class="login-intro" aria-labelledby="login-title"><div class="eyebrow">Видеоаудит кассовых операций</div><h1 id="login-title">Внимание к<br>каждой детали.</h1><p>Видео, события и основания для проверки — в одном рабочем пространстве.</p><ol class="login-features"><li><span class="feature-number" aria-hidden="true">01</span>Загрузите запись кассовых операций</li><li><span class="feature-number" aria-hidden="true">02</span>Просмотрите отмеченные моменты</li><li><span class="feature-number" aria-hidden="true">03</span>Изучите объяснение и кадры события</li></ol></section>
+      <section class="login-card card" aria-labelledby="access-title">
+        <div class="login-mark" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5"></circle><path d="m12 12 9 9m-4-4 3-3m-6 0 3-3"></path></svg></div>
+        <h2 id="access-title">Вход в видеоаудит</h2>
+        <p class="login-copy">Введите ключ доступа, выданный администратором сервиса.</p>
+        <form id="login-form">
+          <label class="field-label" for="api-key">Ключ доступа</label>
+          <div class="key-field">
+            <input class="key-input" id="api-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Введите ваш ключ" aria-describedby="key-hint login-error" required>
+            <button type="button" class="key-toggle" id="toggle-key" aria-label="Показать ключ доступа" aria-pressed="false">Показать</button>
+          </div>
+          <p class="hint" id="key-hint">Доступ действует в этой вкладке до выхода или обновления страницы.</p>
+          <p class="login-error" id="login-error" role="alert" hidden></p>
+          <button type="submit" class="primary submit" id="login-submit">Войти <span aria-hidden="true">→</span></button>
+          <p class="hint" id="login-status" role="status" hidden></p>
+        </form>
+        <p class="login-note">Нет ключа? Обратитесь к администратору сервиса или команде AI GYRLAR.</p>
+      </section>
+    </div>
+    <footer class="login-footer"><span>AI GYRLAR · DATATHON 2026</span><span>Модель анализирует запись. Специалист принимает решение.</span></footer>
+  </main>
+  <main class="shell" id="workspace-screen" data-interface="calm-forte" hidden>
+    <section class="intro" aria-labelledby="page-title"><div><div class="eyebrow">Кассовые операции</div><h1 id="page-title" tabindex="-1">Внимание к каждой детали.</h1><p>Видео, события и основания для проверки — в одном месте.</p></div><span class="badge"><svg class="icon" aria-hidden="true"><use href="#icon-shield"></use></svg>Локальный анализ</span></section>
+    <div class="workspace">
+      <aside class="card upload-panel" aria-labelledby="upload-title">
+        <div class="section-label"><span class="step" aria-hidden="true">1</span><h2 id="upload-title">Видеозапись</h2></div>
+          <form id="analysis-form">
+            <div class="upload-area" id="drop-zone">
+              <div class="file-meta" id="file-meta"><span class="file-icon"><svg class="icon" aria-hidden="true"><use href="#icon-file"></use></svg></span><div><strong id="file-name">Файл не выбран</strong><small id="file-detail">MOV · до 95 МБ</small></div></div>
+              <button type="button" class="secondary choose-video" id="choose-video"><svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg><span id="choose-video-label">Выбрать видео</span></button>
+              <input id="video-file" class="sr-only" type="file" accept=".mov,video/quicktime" aria-label="Видеозапись для проверки" aria-describedby="file-hint" tabindex="-1" required>
+              <p class="hint upload-hint" id="file-hint">Или перетащите запись сюда</p>
+            </div>
+            <button class="primary submit" id="submit" type="submit" disabled hidden>Проверить видео</button>
+            <div class="access-status"><svg class="icon" aria-hidden="true"><use href="#icon-key"></use></svg><span>Ключ доступа настроен<small>Действует в этой вкладке</small></span></div>
+          </form>
+          <div class="alert" id="error" role="alert" hidden></div>
+          <div class="status-panel" id="status-panel" data-spinning="false" role="status" aria-live="polite"><div class="status-label"><span class="spinner" id="spinner" aria-hidden="true" hidden></span><span class="status-dot" aria-hidden="true"></span><span id="status-label">Ожидание видео</span></div><p class="status-detail" id="status-detail">Выберите запись, чтобы начать проверку.</p><div class="status-actions" id="status-actions" hidden><button id="retry-status" type="button">Проверить статус</button></div></div>
+          <div class="verdict" id="verdict" tabindex="-1" hidden><svg class="icon" aria-hidden="true"><use href="#icon-scan"></use></svg><strong id="verdict-title"></strong><p id="verdict-description"></p></div>
+          <details class="scope"><summary>Что проверяет сервис</summary><p class="scope-note" id="scope-note">Проверка ограничена подключёнными правилами. Результат помогает найти события для ручного просмотра; отсутствие находок не гарантирует отсутствие нарушений.</p><div class="rules" id="rules"><p class="hint">Загружаем список правил…</p></div></details>
+          <section class="examples-panel" aria-labelledby="examples-title"><h3 id="examples-title">Демонстрационные примеры</h3><p class="hint">Готовые видео, события и объяснения.</p><div class="example-list" id="examples-list"></div><p class="hint" id="examples-status" role="status">Загружаем примеры…</p><button type="button" id="examples-retry" hidden>Обновить примеры</button></section>
+      </aside>
+      <section class="card results-panel" aria-labelledby="results-title" id="results-section">
+        <div class="section-label"><span class="step" aria-hidden="true">2</span><h2 id="results-title">Просмотр результата</h2></div>
+        <p class="result-source" id="result-source" hidden>Демонстрационный пример</p>
+        <div class="viewer" id="video-viewer" tabindex="-1">
+          <div class="video-empty" id="video-empty"><svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg><strong>Здесь появится видеозапись</strong><span>Выберите файл в панели слева</span></div>
+          <div class="preview" id="preview" hidden><video id="video-preview" controls preload="metadata" playsinline aria-label="Выбранное видео"></video></div>
+          <figure class="evidence-preview" id="evidence-preview" hidden><img id="selected-frame" alt=""><figcaption>Кадр из результата · <span id="selected-frame-time"></span></figcaption></figure>
+        </div>
+        <div class="player-controls"><span><svg class="icon" aria-hidden="true"><use href="#icon-video"></use></svg><span id="player-file">Файл не выбран</span></span><strong id="player-clock">— / —</strong></div>
+        <p class="hint" id="preview-hint" hidden></p>
+        <div class="empty" id="empty"><h3 id="empty-title">События появятся после проверки</h3><p id="empty-description">Выберите видео и запустите анализ.</p></div>
+        <div class="result-body" id="result-body" hidden><div class="event-list" id="events" aria-label="События для проверки"></div></div>
+        <button type="button" class="xai-button" id="open-explanation" hidden><svg class="icon" aria-hidden="true"><use href="#icon-scan"></use></svg>Объяснить результат<span>Explainable AI</span></button>
+      </section>
+    </div>
+    <footer class="workspace-footer"><span>AI GYRLAR · DATATHON 2026</span><span>Вывод проверяет специалист</span></footer>
+  </main>
+  <dialog class="xai-dialog" id="xai-dialog" aria-labelledby="xai-title">
+    <header class="xai-header"><div><div class="eyebrow">Explainable AI</div><h2 id="xai-title">Почему отмечено событие</h2><p>Описание, кадры и основание для проверки</p></div><button id="xai-close" type="button" aria-label="Закрыть объяснение" autofocus>×</button></header>
+    <div class="xai-content"><p class="result-source" id="xai-provenance" hidden>Демонстрационный пример</p><label class="field-label" for="xai-event">Событие для объяснения</label><select id="xai-event"></select><div class="xai-columns"><section><h3>Кадры из видеозаписи</h3><div class="frames" id="xai-frames"></div><p class="hint" id="xai-context-note">Кадры извлечены сервером из видео. Нажмите на кадр для перехода к моменту.</p><div class="xai-limits"><h3 id="xai-description-title">Описание модели</h3><p class="description" id="xai-description"></p></div></section><section><h3>Соответствующее правило</h3><div class="xai-rule" id="xai-rule"></div><details class="xai-limits" id="xai-source-details"><summary id="xai-source-label">Источник правила</summary><p class="source" id="xai-source"></p></details><div class="xai-limits"><h3>Что ещё нужно проверить</h3><ul><li>Сопоставьте описание с кадрами и полным эпизодом.</li><li>Убедитесь, что правило применимо к ситуации.</li><li id="xai-check-note">Описание модели может содержать ошибки. Окончательный вывод делает специалист.</li></ul></div><div class="confidence" id="xai-confidence">Уверенность модели<strong>Оценка не предоставлена</strong></div></section></div></div>
+    <footer class="xai-footer"><p class="hint" id="xai-footer-note">Показаны описание, кадры и правило из результата проверки. Карта внимания модели недоступна.</p><button type="button" class="primary" id="xai-jump">Открыть момент видео</button></footer>
+  </dialog>
+  <script>
+    "use strict";
+    const el = (id) => document.getElementById(id);
+    const state = {file:null, previewUrl:null, ready:false, uploading:false, jobId:null, jobKey:"", terminal:true, polling:false, pollTimer:null, startedAt:0, rules:new Map(), accessKey:"", authenticating:false, session:0, privateRequests:new Set(), events:[], selectedEvent:0, videoUnsupported:false, evidenceFrame:null};
+    Object.assign(state, {examples:[], examplesLoading:false, exampleLoading:false, exampleGeneration:0, example:null, exampleExplanation:null, pendingSeek:null});
+    const MAX_UPLOAD_BYTES = 95_000_000;
+    const POLL_INTERVAL_MS = 2000;
+    const POLL_WINDOW_MS = 330000;
+    const errors = {
+      invalid_api_key:"Ключ доступа не принят. Проверьте его и повторите действие.",
+      queue_full:"Сервис обрабатывает другие видео. Подождите немного и отправьте файл ещё раз.",
+      upload_too_large:"Файл слишком большой. Для демоверсии выберите видео размером до 95 МБ.",
+      mov_file_required:"Выберите видео в формате MOV.",
+      empty_upload:"Выбран пустой файл. Выберите другое видео.",
+      upload_deadline_exceeded:"Передача файла превысила доступное время. Проверьте соединение и размер видео.",
+      deadline_exceeded:"Проверка не завершилась за отведённые пять минут. Результат не получен.",
+      model_unavailable:"Модель пока недоступна. Дождитесь готовности сервиса.",
+      invalid_video_or_evidence:"Не удалось прочитать видео или извлечь кадры. Проверьте файл.",
+      invalid_result:"Модель не вернула полный проверяемый ответ. Результат не получен.",
+      analysis_failed:"Не удалось завершить анализ видео. Результат не получен.",
+      result_too_large:"Результат превысил доступный размер. Обратитесь к организатору сервиса.",
+      server_stopping:"Сервис перезапускается. Результат не получен.",
+      job_not_found:"Эта проверка не найдена. Возможно, сервис был перезапущен.",
+      input_changed:"Исходное видео изменилось во время проверки. Результат не получен."
+    };
+    function loginMessage(message, isError=false) {
+      el("login-error").textContent = isError ? message : "";
+      el("login-error").hidden = !isError || !message;
+      el("login-status").textContent = isError ? "" : message;
+      el("login-status").hidden = isError || !message;
+    }
+    function refreshLogin() {
+      el("login-submit").disabled = state.authenticating;
+      el("login-submit").textContent = state.authenticating ? "Проверяем ключ…" : "Войти →";
+      el("api-key").disabled = state.authenticating;
+      el("toggle-key").disabled = state.authenticating;
+      el("login-form").setAttribute("aria-busy", String(state.authenticating));
+    }
+    function hideKey() {
+      el("api-key").type = "password";
+      el("toggle-key").textContent = "Показать";
+      el("toggle-key").setAttribute("aria-label", "Показать ключ доступа");
+      el("toggle-key").setAttribute("aria-pressed", "false");
+    }
+    function endSession(message="", focus=true) {
+      state.session += 1;
+      state.accessKey = "";
+      state.jobKey = "";
+      state.authenticating = false;
+      state.exampleGeneration += 1;
+      state.exampleLoading = false;
+      state.examplesLoading = false;
+      state.examples = [];
+      el("examples-list").replaceChildren();
+      el("examples-status").textContent = "Загружаем примеры…";
+      el("examples-retry").hidden = true;
+      for (const controller of state.privateRequests) controller.abort();
+      state.privateRequests.clear();
+      clearTimeout(state.pollTimer);
+      state.pollTimer = null;
+      state.uploading = false;
+      state.polling = false;
+      state.terminal = true;
+      state.jobId = null;
+      state.file = null;
+      if (state.previewUrl) URL.revokeObjectURL(state.previewUrl);
+      state.previewUrl = null;
+      el("video-preview").pause();
+      el("video-preview").removeAttribute("src");
+      el("video-preview").load();
+      el("preview").hidden = true;
+      el("video-file").value = "";
+      el("video-file").required = true;
+      state.videoUnsupported = false;
+      updateFileSummary();
+      el("api-key").value = "";
+      el("api-key").removeAttribute("aria-invalid");
+      hideKey();
+      resetResults();
+      setStatus("Ожидание видео", "Выберите запись, чтобы начать проверку.");
+      setError("");
+      el("workspace-screen").hidden = true;
+      el("session-controls").hidden = true;
+      el("login-screen").hidden = false;
+      loginMessage(message);
+      refreshLogin();
+      refreshControls();
+      if (focus) el("api-key").focus();
+    }
+    el("login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (state.authenticating || state.accessKey) return;
+      const key = el("api-key").value.trim();
+      if (!key) { loginMessage("Введите ключ доступа.", true); el("api-key").focus(); return; }
+      const session = state.session;
+      state.authenticating = true;
+      hideKey();
+      loginMessage("Проверяем доступ к сервису…");
+      el("api-key").removeAttribute("aria-invalid");
+      refreshLogin();
+      try {
+        const result = await request("/api/v1/auth/check", {headers:{"X-API-Key":key}}, 10000);
+        if (session !== state.session) return;
+        if (result.authenticated !== true) throw new Error("Сервис не подтвердил доступ. Повторите вход.");
+        state.accessKey = key;
+        el("api-key").value = "";
+        loginMessage("");
+        el("login-screen").hidden = true;
+        el("workspace-screen").hidden = false;
+        el("session-controls").hidden = false;
+        el("page-title").focus({preventScroll:true});
+        refreshControls();
+        checkHealth();
+        loadExamples();
+      } catch (error) {
+        if (session !== state.session) return;
+        loginMessage(error.message, true);
+        if (error.status === 401) el("api-key").setAttribute("aria-invalid", "true");
+      } finally {
+        if (session === state.session) {
+          state.authenticating = false;
+          refreshLogin();
+          if (!state.accessKey) el("api-key").focus();
+        }
+      }
+    });
+    el("toggle-key").addEventListener("click", () => {
+      const visible = el("api-key").type === "password";
+      el("api-key").type = visible ? "text" : "password";
+      el("toggle-key").textContent = visible ? "Скрыть" : "Показать";
+      el("toggle-key").setAttribute("aria-label", visible ? "Скрыть ключ доступа" : "Показать ключ доступа");
+      el("toggle-key").setAttribute("aria-pressed", String(visible));
+    });
+    el("api-key").addEventListener("input", () => { el("api-key").removeAttribute("aria-invalid"); loginMessage(""); });
+    el("logout").addEventListener("click", () => endSession(state.uploading || (state.jobId && !state.terminal) ? "Вы вышли. Уже отправленная проверка может продолжаться на сервере." : "Вы вышли из видеоаудита."));
+    function setError(message) { el("error").textContent = message; el("error").hidden = !message; }
+    function setStatus(title, detail, spinning=false, retry=false) {
+      el("status-panel").hidden = false;
+      el("status-label").textContent = title;
+      el("status-detail").textContent = detail;
+      el("spinner").hidden = !spinning;
+      el("status-panel").dataset.spinning = String(spinning);
+      el("status-panel").dataset.done = String(!el("verdict").hidden && !spinning);
+      el("status-actions").hidden = !retry;
+    }
+    function refreshControls() {
+      const active = state.uploading || state.exampleLoading || (state.jobId && !state.terminal);
+      el("submit").disabled = !state.ready || !state.file || !state.accessKey || Boolean(active);
+      el("video-file").disabled = !state.accessKey || Boolean(active);
+      el("choose-video").disabled = el("video-file").disabled;
+      el("submit").hidden = !state.file || Boolean(state.example) || !el("verdict").hidden;
+      el("submit").textContent = state.uploading ? "Передаём видео…" : active ? "Видео проверяется…" : "Проверить видео";
+      el("retry-status").disabled = state.polling || !state.accessKey;
+      el("examples-retry").disabled = state.examplesLoading || Boolean(active) || !state.accessKey;
+      for (const button of el("examples-list").querySelectorAll("button")) {
+        button.disabled = Boolean(active) || !state.accessKey;
+        button.setAttribute("aria-pressed", String(button.dataset.exampleId === state.example?.example_id));
+      }
+    }
+    function timestamp(value) {
+      const seconds = Number(value);
+      if (!Number.isFinite(seconds) || seconds < 0) return "—";
+      const whole = Math.floor(seconds);
+      const hours = Math.floor(whole / 3600);
+      return (hours ? String(hours).padStart(2,"0") + ":" : "") + String(Math.floor(whole / 60) % 60).padStart(2,"0") + ":" + String(whole % 60).padStart(2,"0") + "." + String(Math.floor((seconds % 1) * 10));
+    }
+    function node(tag, className, text) {
+      const item = document.createElement(tag);
+      if (className) item.className = className;
+      if (text !== undefined) item.textContent = text;
+      return item;
+    }
+    function icon(name) {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "icon");
+      svg.setAttribute("aria-hidden", "true");
+      const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+      use.setAttribute("href", "#icon-" + name);
+      svg.append(use);
+      return svg;
+    }
+    function updateFileSummary() {
+      const file = state.file;
+      el("file-name").textContent = file ? file.name : "Файл не выбран";
+      const duration = el("video-preview").duration;
+      el("file-detail").textContent = file ? (file.size / 1_000_000).toLocaleString("ru-RU", {maximumFractionDigits:1}) + " МБ" + (Number.isFinite(duration) ? " · " + timestamp(duration) : " · MOV") : "MOV · до 95 МБ";
+      el("choose-video-label").textContent = file ? "Выбрать другое видео" : "Выбрать видео";
+      el("file-hint").hidden = Boolean(file);
+      el("player-file").textContent = file ? file.name : "Файл не выбран";
+      updateViewer();
+    }
+    function updateClock() {
+      const video = el("video-preview");
+      const time = state.videoUnsupported && state.evidenceFrame ? state.evidenceFrame.timestamp_sec : video.currentTime;
+      el("player-clock").textContent = state.file ? timestamp(time) + " / " + timestamp(video.duration) : "— / —";
+    }
+    function updateViewerSize() {
+      const viewer = el("video-viewer");
+      const video = el("video-preview");
+      const image = el("selected-frame");
+      let width = 0, height = 0;
+      if (state.file) {
+        if (state.videoUnsupported && state.evidenceFrame && image.complete) {
+          width = image.naturalWidth;
+          height = image.naturalHeight;
+        } else if (!state.videoUnsupported && video.readyState >= 1 && video.currentSrc === state.previewUrl) {
+          width = video.videoWidth;
+          height = video.videoHeight;
+        }
+      }
+      // Intrinsic display dimensions also account for the video's orientation.
+      if (width > 0 && height > 0) {
+        viewer.style.setProperty("--media-ratio", String(width / height));
+        viewer.dataset.sized = "true";
+      } else {
+        viewer.style.removeProperty("--media-ratio");
+        delete viewer.dataset.sized;
+      }
+    }
+    function updateViewer() {
+      const frame = state.videoUnsupported ? state.evidenceFrame : null;
+      el("video-empty").hidden = Boolean(state.file);
+      el("preview").hidden = !state.file || Boolean(frame);
+      el("evidence-preview").hidden = !frame;
+      if (frame) {
+        const source = "data:image/jpeg;base64," + frame.image_base64;
+        if (el("selected-frame").getAttribute("src") !== source) el("selected-frame").src = source;
+        el("selected-frame").alt = "Кадр из видео на отметке " + timestamp(frame.timestamp_sec);
+        el("selected-frame-time").textContent = timestamp(frame.timestamp_sec);
+      } else {
+        el("selected-frame").removeAttribute("src");
+        el("selected-frame").alt = "";
+        el("selected-frame-time").textContent = "";
+      }
+      el("preview-hint").hidden = !state.videoUnsupported || !state.file;
+      el("preview-hint").textContent = frame ? "Браузер не воспроизводит этот MOV. Показан кадр, извлечённый сервером; остальные кадры — в объяснении." : "Браузер не воспроизводит этот MOV. Запись можно проверить; кадры появятся после анализа.";
+      updateViewerSize();
+      updateClock();
+    }
+    async function request(path, options={}, timeout=20000, responseType="json") {
+      const controller = new AbortController();
+      const requestSession = state.session;
+      const privateRequest = Boolean(options.headers && options.headers["X-API-Key"]);
+      if (privateRequest) state.privateRequests.add(controller);
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(path, {...options, signal:controller.signal, cache:"no-store", credentials:"omit", redirect:"error"});
+        if (response.ok && responseType === "blob") {
+          if (Number(response.headers.get("Content-Length")) > MAX_UPLOAD_BYTES) throw new Error(errors.upload_too_large);
+          const blob = await response.blob();
+          if (!blob.size || blob.size > MAX_UPLOAD_BYTES) throw new Error("Не удалось загрузить видео примера.");
+          return blob;
+        }
+        let body;
+        try { body = await response.json(); } catch (_) { throw new Error("Сервис вернул ответ, который не удалось прочитать."); }
+        if (!response.ok) {
+          const code = typeof body.detail === "string" ? body.detail : "";
+          const error = new Error(errors[code] || "Сервис не смог выполнить запрос. Повторите действие позже.");
+          error.status = response.status;
+          if (response.status === 401 && privateRequest && state.accessKey && requestSession === state.session) endSession("Ключ больше не принят сервером. Войдите повторно.");
+          throw error;
+        }
+        return body;
+      } catch (error) {
+        if (error.name === "AbortError") throw new Error("Сервис долго не отвечает. Проверьте соединение.");
+        if (error instanceof TypeError) throw new Error("Нет связи с сервисом. Проверьте соединение.");
+        throw error;
+      } finally { clearTimeout(timer); state.privateRequests.delete(controller); }
+    }
+    async function checkHealth() {
+      try {
+        const health = await request("/healthz", {}, 6000);
+        state.ready = health.status === "ok" && health.model_ready === true;
+        el("health-text").textContent = state.ready ? "Модель готова к проверке" : "Модель ещё не готова";
+      } catch (_) {
+        state.ready = false;
+        el("health-text").textContent = "Нет связи с сервисом";
+      }
+      el("health").dataset.ready = String(state.ready);
+      refreshControls();
+    }
+    async function loadRules() {
+      try {
+        const data = await request("/api/v1/rules", {}, 10000);
+        if (!Array.isArray(data.rules)) throw new Error("invalid_rules");
+        el("rules").replaceChildren();
+        if (typeof data.scope_note === "string" && data.scope_note.trim()) el("scope-note").textContent = data.scope_note;
+        for (const rule of data.rules) {
+          if (!rule || typeof rule.rule_id !== "string" || typeof rule.title !== "string") continue;
+          state.rules.set(rule.rule_id, rule);
+          const item = node("div", "rule");
+          item.append(node("strong", "", rule.title), node("p", "", sourceText(rule)));
+          el("rules").append(item);
+        }
+        if (!state.rules.size) el("rules").append(node("p", "hint", "Список правил пока недоступен."));
+      } catch (_) { el("rules").replaceChildren(node("p", "hint", "Не удалось загрузить список правил. Обновите страницу, когда сервис будет доступен.")); }
+    }
+    function sourceText(rule) {
+      return [rule.source, rule.clause].filter(value => typeof value === "string" && value.trim()).join(" · ") || "Основание не указано в справочнике.";
+    }
+    async function loadExamples() {
+      if (!state.accessKey || state.examplesLoading) return;
+      const session = state.session;
+      state.examplesLoading = true;
+      el("examples-status").textContent = "Загружаем примеры…";
+      el("examples-retry").hidden = true;
+      refreshControls();
+      try {
+        const data = await request("/api/v1/examples", {headers:{"X-API-Key":state.accessKey}});
+        if (session !== state.session) return;
+        if (data.source !== "human_annotation" || data.model_generated !== false || !Array.isArray(data.examples) || data.examples.length > 100) throw new Error("Сервис не подтвердил источник примеров.");
+        for (const example of data.examples) {
+          if (!example || typeof example.example_id !== "string" || !/^[a-zA-Z0-9_-]{1,80}$/.test(example.example_id) || typeof example.title !== "string" || !example.title.trim() || example.title.length > 1000 || typeof example.video_id !== "string" || !/^[a-zA-Z0-9_-]{1,80}$/.test(example.video_id) || !Number.isFinite(example.timecode_sec) || example.timecode_sec < 0) throw new Error("Список примеров имеет неверный формат.");
+        }
+        state.examples = data.examples;
+        el("examples-list").replaceChildren();
+        for (const example of state.examples) {
+          const button = node("button", "example-button", example.title);
+          button.type = "button";
+          button.dataset.exampleId = example.example_id;
+          button.append(node("small", "", example.video_id + " · " + timestamp(example.timecode_sec)));
+          button.addEventListener("click", () => openExample(example));
+          el("examples-list").append(button);
+        }
+        el("examples-status").textContent = state.examples.length ? "Выберите пример для просмотра." : "Размеченные примеры пока не добавлены.";
+      } catch (error) {
+        if (session !== state.session) return;
+        el("examples-status").textContent = error.status === 404 ? "Размеченные примеры пока не подключены к сервису." : error.message;
+        el("examples-retry").hidden = false;
+      } finally {
+        if (session === state.session) { state.examplesLoading = false; refreshControls(); }
+      }
+    }
+    function validateManualExplanation(data, result, example) {
+      if (data.status !== "done" || data.example_id !== example.example_id || data.job_id !== result.job_id || data.result_source !== "human_annotation" || data.model_generated !== false) throw new Error("Сервис не подтвердил источник объяснения.");
+      const explanation = data.explanation;
+      if (!explanation || !Array.isArray(explanation.events) || explanation.events.length !== result.violations.length) throw new Error("Объяснение примера недоступно.");
+      for (const [index, event] of result.violations.entries()) {
+        const detail = explanation.events.find(item => item.event_index === index);
+        if (!detail || detail.description_source !== "human_annotation" || detail.type !== event.type || detail.timecode_sec !== event.timecode_sec || !Array.isArray(detail.context_frames) || !detail.context_frames.length || detail.context_frames.length > 3) throw new Error("Объяснение не соответствует событию примера.");
+        const roles = new Set();
+        for (const frame of detail.context_frames) {
+          if (!validFrame(frame) || !["before", "event", "after"].includes(frame.role) || roles.has(frame.role)) throw new Error("Кадры объяснения имеют неверный формат.");
+          roles.add(frame.role);
+        }
+      }
+      return explanation;
+    }
+    async function openExample(example) {
+      if (!state.accessKey || state.exampleLoading || state.uploading || (state.jobId && !state.terminal)) return;
+      const session = state.session;
+      const generation = ++state.exampleGeneration;
+      state.exampleLoading = true;
+      el("examples-status").textContent = "Открываем " + example.video_id + "…";
+      setError("");
+      refreshControls();
+      // Construct same-origin routes ourselves; never send the access key to a URL from the response.
+      const base = "/api/v1/examples/" + encodeURIComponent(example.example_id);
+      const options = {headers:{"X-API-Key":state.accessKey}};
+      try {
+        const [result, explanationData, video] = await Promise.all([
+          request(base, options), request(base + "/explanation", options), request(base + "/video", options, 60000, "blob")
+        ]);
+        if (session !== state.session || generation !== state.exampleGeneration) return;
+        if (result.status !== "done" || result.example_id !== example.example_id || result.result_source !== "human_annotation" || result.model_generated !== false || typeof result.job_id !== "string") throw new Error("Сервис не подтвердил ручную разметку примера.");
+        validateResult(result);
+        const explanation = validateManualExplanation(explanationData, result, example);
+        state.exampleLoading = false;
+        chooseFile(new File([video], example.video_id + ".mov", {type:video.type || "video/quicktime"}));
+        state.example = example;
+        state.exampleExplanation = explanation;
+        state.jobId = result.job_id;
+        state.pendingSeek = result.violations[0]?.timecode_sec ?? example.timecode_sec;
+        showResult(result);
+        setStatus("Пример готов к просмотру", "Откройте отмеченный момент или объяснение события.");
+        el("examples-status").textContent = "Открыт " + example.video_id + ". Выберите событие или объяснение.";
+        refreshControls();
+      } catch (error) {
+        if (session !== state.session || generation !== state.exampleGeneration) return;
+        el("examples-status").textContent = "Пример не открыт. " + error.message + " Нажмите на пример, чтобы повторить.";
+      } finally {
+        if (session === state.session && generation === state.exampleGeneration) { state.exampleLoading = false; refreshControls(); }
+      }
+    }
+    el("examples-retry").addEventListener("click", loadExamples);
+    function eventTitle(event) {
+      return state.example ? state.example.title : state.rules.get(event.type)?.title || event.type;
+    }
+    function resetResults() {
+      el("xai-dialog").close();
+      state.example = null;
+      state.exampleExplanation = null;
+      state.pendingSeek = null;
+      el("result-source").hidden = true;
+      el("xai-provenance").hidden = true;
+      state.events = [];
+      state.selectedEvent = 0;
+      state.evidenceFrame = null;
+      el("xai-event").replaceChildren();
+      el("xai-frames").replaceChildren();
+      for (const id of ["xai-description", "xai-rule", "xai-source", "verdict-title", "verdict-description"]) el(id).textContent = "";
+      el("result-body").hidden = true;
+      el("verdict").hidden = true;
+      el("open-explanation").hidden = true;
+      el("empty").hidden = false;
+      el("empty-title").textContent = "События появятся после проверки";
+      el("empty-description").textContent = "Выберите видео и запустите анализ.";
+      el("events").replaceChildren();
+      updateViewer();
+    }
+    function chooseFile(file) {
+      if (!state.accessKey || state.exampleLoading || state.uploading || (state.jobId && !state.terminal)) return;
+      state.exampleGeneration += 1;
+      setError("");
+      state.file = null;
+      state.videoUnsupported = false;
+      if (state.previewUrl) { URL.revokeObjectURL(state.previewUrl); state.previewUrl = null; }
+      el("video-preview").removeAttribute("src");
+      el("video-preview").load();
+      el("preview").hidden = true;
+      resetResults();
+      setStatus("Ожидание видео", "Выберите запись, чтобы начать проверку.");
+      state.jobId = null;
+      state.jobKey = "";
+      if (file) {
+        if (!/\.mov$/i.test(file.name)) setError(errors.mov_file_required);
+        else if (file.size === 0) setError(errors.empty_upload);
+        else if (file.size > MAX_UPLOAD_BYTES) setError(errors.upload_too_large);
+        else {
+          state.file = file;
+          state.previewUrl = URL.createObjectURL(file);
+          el("video-preview").src = state.previewUrl;
+          setStatus("Видеозапись выбрана", "Запустите проверку, чтобы увидеть события и объяснения.");
+        }
+      }
+      el("video-file").required = !state.file;
+      updateFileSummary();
+      refreshControls();
+    }
+    function seek(seconds, focus=true) {
+      const video = el("video-preview");
+      if (!Number.isFinite(seconds) || seconds < 0 || !state.previewUrl) return;
+      if (state.videoUnsupported) {
+        if (focus) { el("video-viewer").focus(); el("video-viewer").scrollIntoView({block:"nearest"}); }
+        return;
+      }
+      try {
+        video.currentTime = Number.isFinite(video.duration) ? Math.min(seconds, video.duration) : seconds;
+        if (focus) { video.focus(); video.scrollIntoView({behavior:"auto", block:"nearest"}); }
+        updateClock();
+      } catch (_) { state.videoUnsupported = true; updateViewer(); }
+    }
+    function selectEvent(index, jump=false) {
+      const event = state.events[index];
+      if (!event) return;
+      state.selectedEvent = index;
+      state.evidenceFrame = event.evidence_frames[0];
+      el("events").querySelectorAll("button").forEach((button, position) => button.setAttribute("aria-pressed", String(index === position)));
+      updateViewer();
+      if (jump) seek(event.timecode_sec, false);
+    }
+    function renderFrames(target, event, closeDialog=false) {
+      target.replaceChildren();
+      target.dataset.context = String(event.evidence_frames.some(frame => frame.role));
+      for (const frame of event.evidence_frames) {
+        const figure = node("figure", "frame");
+        const button = node("button");
+        button.type = "button";
+        button.setAttribute("aria-label", "Открыть момент видео " + timestamp(frame.timestamp_sec));
+        button.addEventListener("click", () => { if (closeDialog) el("xai-dialog").close(); state.evidenceFrame = frame; updateViewer(); seek(frame.timestamp_sec); });
+        const img = node("img");
+        img.src = "data:image/jpeg;base64," + frame.image_base64;
+        img.alt = "Кадр из видео на отметке " + timestamp(frame.timestamp_sec);
+        img.addEventListener("error", () => { img.hidden = true; button.append(node("span", "alert", "Кадр не удалось отобразить")); }, {once:true});
+        button.append(img);
+        const role = {before:"До события", event:"Момент события", after:"После события"}[frame.role] || "Кадр";
+        figure.append(button, node("figcaption", "", role + " · " + timestamp(frame.timestamp_sec)));
+        target.append(figure);
+      }
+    }
+    function selectExplanation() {
+      const event = state.events[Number(el("xai-event").value)];
+      if (!event) return;
+      selectEvent(Number(el("xai-event").value));
+      const rule = state.rules.get(event.type);
+      const manual = Boolean(state.example);
+      const detail = state.exampleExplanation?.events.find(item => item.event_index === Number(el("xai-event").value));
+      el("xai-provenance").hidden = !manual;
+      el("xai-description-title").textContent = manual ? "Объяснение события" : "Описание модели";
+      el("xai-confidence").hidden = manual;
+      el("xai-check-note").textContent = manual ? "Проверьте отмеченный момент по исходному видео. Окончательный вывод делает специалист." : "Описание модели может содержать ошибки. Окончательный вывод делает специалист.";
+      el("xai-footer-note").textContent = manual ? "Показаны отмеченный момент и кадры исходного видео." : "Показаны описание, кадры и правило из результата проверки. Карта внимания модели недоступна.";
+      const summary = state.exampleExplanation?.aggregation?.explanation;
+      const missingRoles = manual && Array.isArray(detail?.missing_context_roles) ? detail.missing_context_roles.filter(role => ["before", "after"].includes(role)).map(role => role === "before" ? "до события" : "после события") : [];
+      el("xai-context-note").textContent = "Кадры извлечены сервером из видео. Нажмите на кадр для перехода к моменту." + (missingRoles.length ? " Недоступны кадры: " + missingRoles.join(", ") + "." : "");
+      el("xai-description").textContent = event.description;
+      el("xai-rule").textContent = eventTitle(event);
+      el("xai-source-label").textContent = manual ? "Источник результата" : "Источник правила";
+      el("xai-source").textContent = manual ? "Ручная разметка пользователя. Время и объяснение заданы заранее; модель не принимала это решение." + (typeof summary === "string" && summary.trim() ? " " + summary : "") : rule ? sourceText(rule) : "Основание отсутствует в доступном справочнике правил.";
+      el("xai-jump").textContent = "К моменту " + timestamp(event.timecode_sec) + " →";
+      renderFrames(el("xai-frames"), detail ? {evidence_frames:detail.context_frames} : event, true);
+    }
+    el("open-explanation").addEventListener("click", () => openExplanation(state.selectedEvent));
+    function openExplanation(index) {
+      if (!state.accessKey || !state.events[index]) return;
+      el("xai-event").value = String(index);
+      el("xai-source-details").open = false;
+      selectExplanation();
+      el("xai-dialog").showModal();
+    }
+    el("xai-close").addEventListener("click", () => el("xai-dialog").close());
+    el("xai-dialog").addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const controls = [...el("xai-dialog").querySelectorAll("button:not(:disabled), select, summary, a[href]")].filter(control => control.getClientRects().length > 0);
+      const first = controls[0], last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+    el("xai-event").addEventListener("change", selectExplanation);
+    el("xai-jump").addEventListener("click", () => {
+      const event = state.events[Number(el("xai-event").value)];
+      el("xai-dialog").close();
+      if (event) seek(event.timecode_sec);
+    });
+    function validFrame(frame) {
+      return frame && Number.isFinite(frame.timestamp_sec) && frame.timestamp_sec >= 0 && typeof frame.image_base64 === "string" && frame.image_base64.length <= 2800000 && /^\/9j\/[A-Za-z0-9+/]*={0,2}$/.test(frame.image_base64);
+    }
+    function validateResult(data) {
+      const events = data.violations;
+      if (!["violation", "no_violation"].includes(data.verdict) || !Array.isArray(events) || (data.verdict === "violation") !== (events.length > 0)) throw new Error(errors.invalid_result);
+      // Validate the display fields before presenting any result as complete.
+      for (const event of events) {
+        if (!event || typeof event.type !== "string" || typeof event.description !== "string" || !Number.isFinite(event.timecode_sec) || event.timecode_sec < 0 || !Array.isArray(event.evidence_frames) || !event.evidence_frames.length) throw new Error(errors.invalid_result);
+        for (const frame of event.evidence_frames) {
+          if (!validFrame(frame)) throw new Error(errors.invalid_result);
+        }
+      }
+    }
+    function showResult(data) {
+      validateResult(data);
+      const events = data.violations;
+      const manual = Boolean(state.example);
+      state.events = events;
+      el("result-source").hidden = !manual;
+      el("xai-event").replaceChildren();
+      events.forEach((event, index) => {
+        const option = node("option", "", timestamp(event.timecode_sec) + " · " + eventTitle(event));
+        option.value = String(index);
+        el("xai-event").append(option);
+      });
+      el("events").replaceChildren();
+      el("verdict").dataset.kind = data.verdict;
+      el("verdict-title").textContent = manual ? (events.length ? "Отмечено нарушение" : "Нарушения не отмечены") : data.verdict === "violation" ? "Есть события для проверки" : "Нарушения не обнаружены";
+      el("verdict-description").textContent = manual ? "Событий: " + events.length + ". Откройте объяснение и кадры." : data.verdict === "violation" ? "Событий: " + events.length + ". Вывод проверяет специалист." : "В пределах подключённых правил модель не выявила нарушений. Это не исключает события, которые модель могла пропустить.";
+      for (const [index, event] of events.entries()) {
+        const button = node("button", "event-button");
+        button.type = "button";
+        const copy = node("span", "event-copy");
+        copy.append(node("strong", "", eventTitle(event)), node("small", "", event.description));
+        button.append(node("span", "event-time", timestamp(event.timecode_sec)), copy, icon("chevron"));
+        button.setAttribute("aria-label", "Событие " + (index + 1) + ", " + timestamp(event.timecode_sec) + ": " + eventTitle(event));
+        button.addEventListener("click", () => selectEvent(index, true));
+        el("events").append(button);
+      }
+      el("empty").hidden = events.length > 0;
+      el("empty-title").textContent = "Нет событий для проверки";
+      el("empty-description").textContent = "Видеозапись доступна для самостоятельного просмотра.";
+      el("result-body").hidden = !events.length;
+      el("verdict").hidden = false;
+      el("open-explanation").hidden = !events.length;
+      if (events.length) selectEvent(0, true);
+      el("verdict").focus({preventScroll:true});
+    }
+    async function pollStatus() {
+      if (!state.accessKey || state.polling || !state.jobId || state.terminal) return;
+      const session = state.session;
+      state.polling = true;
+      refreshControls();
+      try {
+        const data = await request("/api/v1/jobs/" + encodeURIComponent(state.jobId), {headers:{"X-API-Key":state.jobKey}});
+        if (session !== state.session) return;
+        if (data.status === "done") {
+          showResult(data);
+          state.terminal = true;
+          state.jobKey = "";
+          setError("");
+          setStatus("Проверка завершена", "Нажмите на время события, чтобы перейти к нужному моменту.");
+        } else if (data.status === "failed") {
+          state.terminal = true;
+          state.jobKey = "";
+          setError(errors[data.error && data.error.code] || errors.analysis_failed);
+          setStatus("Проверка не завершена", "Достоверного результата нет. Можно выбрать другое видео или повторить отправку.");
+          el("empty-title").textContent = "Результат не получен";
+          el("empty-description").textContent = "Ошибка обработки не означает отсутствие нарушений.";
+        } else if (data.status === "processing") {
+          const elapsed = Date.now() - state.startedAt;
+          if (elapsed > POLL_WINDOW_MS) {
+            setStatus("Ожидание приостановлено", "Сервис ещё не вернул результат. Проверьте статус вручную — видео повторно не отправится.", false, true);
+          } else {
+            setStatus("Анализируем видео", "Ожидание: " + Math.floor(elapsed / 1000) + " с. Страница автоматически покажет результат.", true);
+            state.pollTimer = setTimeout(pollStatus, POLL_INTERVAL_MS);
+          }
+        } else { throw new Error(errors.invalid_result); }
+      } catch (error) {
+        if (session !== state.session) return;
+        if (error.status === 404) { state.terminal = true; state.jobKey = ""; }
+        setError(error.message);
+        setStatus("Статус пока недоступен", state.terminal ? "Проверка не найдена на сервере. Можно отправить видео повторно." : "Проверьте статус ещё раз. Исходное видео повторно отправлено не будет.", false, !state.terminal);
+      } finally { if (session === state.session) { state.polling = false; refreshControls(); } }
+    }
+    el("analysis-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (el("submit").disabled) return;
+      const session = state.session;
+      if (state.file.size > MAX_UPLOAD_BYTES) { setError(errors.upload_too_large); return; }
+      setError("");
+      resetResults();
+      clearTimeout(state.pollTimer);
+      state.uploading = true;
+      state.jobId = null;
+      state.jobKey = state.accessKey;
+      state.startedAt = Date.now();
+      refreshControls();
+      setStatus("Передаём видео", "Оставьте страницу открытой до получения результата.", true);
+      el("empty-title").textContent = "Проверка выполняется";
+      el("empty-description").textContent = "Видео будет обработано локальной моделью. Результат появится автоматически.";
+      const form = new FormData();
+      form.append("file", state.file, state.file.name);
+      try {
+        const data = await request("/api/v1/analyze", {method:"POST", headers:{"X-API-Key":state.jobKey}, body:form}, 310000);
+        if (session !== state.session) return;
+        if (typeof data.job_id !== "string" || !data.job_id || data.job_id.length > 256) throw new Error("Сервис не вернул номер проверки.");
+        state.jobId = data.job_id;
+        state.terminal = false;
+      } catch (error) {
+        if (session !== state.session) return;
+        state.terminal = true;
+        state.jobKey = "";
+        setError(error.message);
+        setStatus("Отправка не подтверждена", "Автоматической повторной отправки не будет. Если связь прервалась, обработка на сервере могла начаться.");
+        el("empty-title").textContent = "Результат не получен";
+        el("empty-description").textContent = "Проверьте сообщение слева перед повторной отправкой.";
+      } finally { if (session === state.session) { state.uploading = false; refreshControls(); } }
+      if (session === state.session && state.jobId) pollStatus();
+    });
+    el("video-file").addEventListener("change", (event) => chooseFile(event.target.files[0]));
+    el("choose-video").addEventListener("click", () => el("video-file").click());
+    el("retry-status").addEventListener("click", () => {
+      state.jobKey = state.accessKey;
+      if (!state.jobKey) return;
+      setError("");
+      clearTimeout(state.pollTimer);
+      pollStatus();
+    });
+    for (const eventName of ["dragenter", "dragover"]) el("drop-zone").addEventListener(eventName, (event) => { event.preventDefault(); if (!el("video-file").disabled) el("drop-zone").classList.add("dragging"); });
+    for (const eventName of ["dragleave", "drop"]) el("drop-zone").addEventListener(eventName, (event) => { event.preventDefault(); el("drop-zone").classList.remove("dragging"); });
+    el("drop-zone").addEventListener("drop", (event) => {
+      if (el("video-file").disabled) return;
+      if (event.dataTransfer.files.length !== 1) { setError("Выберите одно видео для проверки."); return; }
+      // The selected File is kept in memory; the visible label uses its actual name.
+      chooseFile(event.dataTransfer.files[0]);
+      el("video-file").value = "";
+      el("video-file").required = !state.file;
+    });
+    el("video-preview").addEventListener("error", () => { if (state.file) { state.videoUnsupported = true; updateViewer(); } });
+    el("video-preview").addEventListener("loadedmetadata", () => {
+      if (state.file) {
+        state.videoUnsupported = false;
+        updateFileSummary();
+        if (state.pendingSeek !== null) { seek(state.pendingSeek, false); state.pendingSeek = null; }
+      }
+    });
+    el("video-preview").addEventListener("resize", updateViewerSize);
+    el("selected-frame").addEventListener("load", updateViewerSize);
+    el("video-preview").addEventListener("timeupdate", updateClock);
+    window.addEventListener("beforeunload", (event) => { if (state.uploading || (state.jobId && !state.terminal)) { event.preventDefault(); event.returnValue = ""; } });
+    window.addEventListener("pagehide", () => endSession("", false));
+    checkHealth();
+    loadRules();
+    setInterval(checkHealth, 10000);
+  </script>
+</body>
+</html>

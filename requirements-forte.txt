@@ -1,0 +1,9 @@
+# Optional, local ForteBank API / evidence / synthetic API tests.
+# Install in a separate environment; the tabular environment is unchanged.
+fastapi==0.143.3
+uvicorn==0.54.0
+python-multipart==0.0.32
+httpx==0.28.1
+numpy==2.2.6
+av==19.0.1
+Pillow==12.1.0

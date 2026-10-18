@@ -1,0 +1,11 @@
+{
+  "experiment_config": "outputs/forte-service/deployments/20261018/20261017T234500Z-schema-v2/config.json",
+  "model_port": 8777,
+  "api_port": 8000,
+  "host": "127.0.0.1",
+  "runtime_root": "outputs/forte-service",
+  "api_key_file": "outputs/forte-service/operator-key.txt",
+  "ui_path": "web/forte_service/index.html",
+  "minimum_start_ram_gib": 2.5,
+  "deadline_seconds": 300
+}

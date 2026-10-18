@@ -1,0 +1,22 @@
+{
+  "data_path": null,
+  "dataset_label": null,
+  "task": null,
+  "target": null,
+  "features": [],
+  "id_column": null,
+  "validation": null,
+  "group_column": null,
+  "time_column": null,
+  "validation_size": 0.2,
+  "seed": 42,
+  "metrics": [],
+  "average": null,
+  "positive_label": null,
+  "models": ["linear"],
+  "model_params": {},
+  "read_options": {},
+  "output_dir": "outputs/experiments",
+  "data_kind": "real",
+  "target_transform": "none"
+}

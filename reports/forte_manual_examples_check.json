@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-10-18T06:18:25.442161+00:00",
+  "health": {
+    "status": "ok",
+    "model_ready": false,
+    "manual_examples_available": true
+  },
+  "source": "human_annotation",
+  "model_generated": false,
+  "recognition_quality": "Not measured by manual examples; automatic diagnostic runs missed violations.",
+  "tests": {
+    "passed": 221,
+    "duration_seconds": 13.34,
+    "ruff": "PASS",
+    "warning": "Starlette TestClient httpx deprecation; tests passed",
+    "fixed_test_flake": "Deterministic mocked clock replaces equal Windows monotonic timestamps in restart-budget test."
+  },
+  "runtime_mode": "manual_examples_only",
+  "automatic_analysis_enabled": false,
+  "frontend": "Contract and verified API endpoints sent to the authorized frontend chat; no frontend files edited by this task.",
+  "example_count": 4,
+  "publication_note": "Private example identifiers and annotation timestamps omitted. No private media included."
+}

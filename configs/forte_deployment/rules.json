@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "ruleset_id": "forte-nbrk231-p20-p22-v1",
+  "status": "SOURCE_BACKED_LIMITED_SUBSET",
+  "source": {
+    "path": "C:/Users/User/Downloads/Кейс_ForteBank.docx",
+    "sha256": "f73a951c87aca9d540076aacc5b4fd8a688810a4ec827b1a382512c770d278a0",
+    "inspection": "read_only_OOXML_paragraphs_and_tables",
+    "rendered_page_numbers_verified": false
+  },
+  "task_requirements": [
+    {
+      "rule_id": "TASK_VISIBLE_EVIDENCE",
+      "source_locator": "sections 4, 5 and 7",
+      "support_level": "explicit_task_requirement",
+      "requirement": "Report observable signs, event time and evidence. Do not claim a violation when the conclusion requires invisible records, postings, reconciliation or bank-system data."
+    },
+    {
+      "rule_id": "TASK_RESEARCH_SOURCES",
+      "source_locator": "sections 2, 3 and 6; FAQ B8, F30, F31, F32",
+      "support_level": "explicit_task_requirement",
+      "requirement": "The team must research relevant public normative sources, identify applicable rules and justify the mapping to visible events. No exhaustive violation list or cashier regulation is supplied. FAQ identifies Kazakhstan sources; it also accepts references without exact clauses and open documents of other banks."
+    },
+    {
+      "rule_id": "TASK_NO_LEGAL_CONCLUSION",
+      "source_locator": "section 7",
+      "support_level": "explicit_task_requirement",
+      "requirement": "The result assists human review; it is not a final legal or disciplinary conclusion."
+    },
+    {
+      "rule_id": "TASK_LOCAL_ONLY",
+      "source_locator": "section 7; FAQ D21, G35",
+      "support_level": "explicit_task_requirement",
+      "requirement": "Video processing is local. Do not send videos, frames or their descriptions to cloud AI services."
+    }
+  ],
+  "verified_detection_rules": [
+    {
+      "rule_id": "prior_customer_cash_exposed",
+      "enabled": true,
+      "source": "https://old.adilet.zan.kz/rus/docs/V1900019680/compare",
+      "clause": "20, second paragraph",
+      "support_level": "official_indexed_text_with_clause_number",
+      "normative_summary": "Cash at the workstation belongs to the current customer; previously accepted cash is kept in designated lockable storage.",
+      "observable_predicate": "Across supplied frames, clearly track cash accepted from customer A, customer A finishing and leaving, and a distinct customer B starting a new cash transaction while the same earlier cash remains exposed on the desk outside designated storage.",
+      "required_conditions": [
+        "visible acceptance of customer A cash",
+        "visible A departure and distinct B new transaction",
+        "visible continuity of the earlier cash pile outside storage"
+      ],
+      "exclude": [
+        "cash of the current customer during an ongoing operation",
+        "two people jointly involved in one transaction",
+        "unclear cash ownership or unseen transition",
+        "closed safe without evidence of its lock state"
+      ],
+      "interpretation": "This temporal predicate is an operational visual implementation of clause 20; no fixed number of seconds is asserted to be a legal threshold."
+    },
+    {
+      "rule_id": "cashier_leaves_active_service",
+      "enabled": true,
+      "source": "https://old.adilet.zan.kz/rus/docs/V1900019680/compare",
+      "clause": "22, within paragraph 2 on accepting cash",
+      "support_level": "official_indexed_text_with_clause_number",
+      "normative_summary": "A cashier must not leave the workstation before finishing customer service.",
+      "observable_predicate": "Clearly observe a customer cash-acceptance transaction underway, the cashier leaving the workstation and that same customer still waiting with the visibly unfinished transaction. Require the before/after sequence, not a lone empty chair.",
+      "required_conditions": [
+        "visible ongoing customer cash-acceptance transaction",
+        "cashier visibly exits workstation",
+        "same customer visibly remains awaiting completion"
+      ],
+      "exclude": [
+        "standing to use nearby equipment while remaining at workstation",
+        "departure after visible completion",
+        "empty chair without preceding active transaction",
+        "unknown role or unclear continuity"
+      ],
+      "interpretation": "Whether service is visibly unfinished is an operational observation, not an inference about invisible banking-system completion."
+    }
+  ],
+  "unverified_detection_rules_enabled": false,
+  "sources_checked": [
+    "src/forte/contracts.py",
+    "src/forte/evidence.py",
+    "docs/forte_local.md",
+    "C:/Users/User/Downloads/Кейс_ForteBank.docx"
+  ],
+  "source_gap": "The task contains no closed list. This first baseline implements only two observable predicates backed by clauses 20 and 22. It does not cover the whole law or all labelled violations. No claims are made about unseen records, lock status, identity-document checks, phone use, receipt issuance, or omitted counting. Full current consolidated text was not directly downloadable; source text was obtained from the official indexed page and history.",
+  "automatic_positive_forbidden_without_extra_evidence": [
+    "ordinary handover, receipt, counting or return of cash",
+    "ordinary use of a laptop, phone or identity document",
+    "a closed safe without visible proof about the lock",
+    "presence of banknotes on a desk during an ongoing operation",
+    "a step not shown in sparse frames",
+    "an assumed amount, authenticity result, posting, reconciliation or authorization"
+  ],
+  "technical_policy": {
+    "completed_schema": "adapter converts complete validated window outputs into src.forte.contracts.validate_candidate schema",
+    "event_type": "enabled rule_id",
+    "event_time": "one of the timestamps supplied with the current frame window",
+    "description": "visible evidence plus a source reference; no unseen motive or legal guilt",
+    "abstention": {
+      "verdict": "uncertain",
+      "analysis_complete": false,
+      "events": [],
+      "uncertainty_reason": "short specific reason"
+    },
+    "negative": "Only after all planned windows were successfully analyzed and no unresolved evidence remains; no_violation means no enabled criterion detected under the sampling protocol, not proof of legal compliance.",
+    "partial_positive": "Keep detected events in a private partial-outcome record, but reject the final candidate if any required window is incomplete, timed out, truncated or uncertain under the current strict contract.",
+    "technical_failure": "Invalid JSON, refusal, truncation, timeout, decoding failure and model unavailability are separate failed outcomes and never no_violation.",
+    "missing_coverage": "Unseen intervals are not negative examples. Finite frame sampling cannot certify every moment of the original video.",
+    "model_schema": {
+      "verdict": [
+        "violation",
+        "no_violation",
+        "uncertain"
+      ],
+      "analysis_complete": "boolean",
+      "events": [
+        {
+          "time_seconds": "number",
+          "rule_id": "enabled rule_id",
+          "description": "visible evidence and source reference"
+        }
+      ],
+      "uncertainty_reason": "string; empty only for complete results"
+    },
+    "window_context_limit": "Local: up to 16 frames, planned 0.5-second interval, overlap 2. Overview: one window of 16 uniformly sampled frames spanning the full video. Each request receives kind and actual timestamps, no cross-window model memory. Overview gaps do not establish omitted actions, unchanged ownership or uninterrupted object continuity. Finite sampling is not continuous coverage.",
+    "runtime_protocol": {
+      "local_max_frames": 16,
+      "sampling_fps": 2,
+      "local_overlap_frames": 2,
+      "overview_windows_per_video": 1,
+      "overview_frames": 16,
+      "overview_selection": "uniform_whole_video_without_labels",
+      "request_metadata": [
+        "kind",
+        "actual_timestamps"
+      ],
+      "visual_token_cap_per_frame": 384,
+      "context_tokens": 12288
+    }
+  },
+  "normative_source": {
+    "title": "Rules on cash operations and collection operations, NB RK Board Resolution 29 November 2019 No. 231",
+    "registration": "3 December 2019 No. 19680",
+    "canonical_url": "https://adilet.zan.kz/rus/docs/V1900019680",
+    "text_url": "https://old.adilet.zan.kz/rus/docs/V1900019680/compare",
+    "history_url": "https://adilet.zan.kz/rus/docs/V1900019680/history",
+    "reviewed_on": "2026-10-18",
+    "status_as_seen": "Updated; history indexed through 2026-07-12",
+    "retrieval": "Official Adilet text returned by web search; direct page fetch timed out / JS challenge. Exact public law passages and clause numbers inspected in indexed official source. No legal applicability certification.",
+    "applicability": "Second-tier banks and the entities named in section 1. This is the appropriate institutional scope for the supplied bank cashier task, unlike National Bank branch-only rules.",
+    "verified_clauses": [
+      "20",
+      "22"
+    ],
+    "complete_current_consolidation_verified": false
+  },
+  "excluded_candidates": [
+    {
+      "candidate": "counting_after_customer_leaves",
+      "reason": "Clause 20 requires presence at acceptance/counting, but a later recount is not proof that the required initial count was omitted. Sparse frames cannot establish that absence."
+    },
+    {
+      "candidate": "phone_use_or_personal_object",
+      "reason": "No applicable verified rule in the chosen subset; object use alone is not a violation."
+    },
+    {
+      "candidate": "open_safe_or_glass_door",
+      "reason": "No applicable specific predicate with all conditions was verified in this subset; presence/open state alone is insufficient."
+    },
+    {
+      "candidate": "missing_document_check_or_counting",
+      "reason": "Unobserved actions between frames and digital-document alternatives make omission claims unsupported."
+    }
+  ],
+  "independent_accuracy": "NOT RUN: criteria audit only; development baseline will not be independent final evaluation."
+}

@@ -1,0 +1,443 @@
+{
+  "data_path": "data/raw/house_prices/train.csv",
+  "dataset_label": "EDUCATIONAL ONLY | Kaggle House Prices | user-provided original files; hashes recorded",
+  "task": "regression",
+  "target": "SalePrice",
+  "features": [
+    "MSSubClass",
+    "MSZoning",
+    "LotFrontage",
+    "LotArea",
+    "Street",
+    "Alley",
+    "LotShape",
+    "LandContour",
+    "Utilities",
+    "LotConfig",
+    "LandSlope",
+    "Neighborhood",
+    "Condition1",
+    "Condition2",
+    "BldgType",
+    "HouseStyle",
+    "OverallQual",
+    "OverallCond",
+    "YearBuilt",
+    "YearRemodAdd",
+    "RoofStyle",
+    "RoofMatl",
+    "Exterior1st",
+    "Exterior2nd",
+    "MasVnrType",
+    "MasVnrArea",
+    "ExterQual",
+    "ExterCond",
+    "Foundation",
+    "BsmtQual",
+    "BsmtCond",
+    "BsmtExposure",
+    "BsmtFinType1",
+    "BsmtFinSF1",
+    "BsmtFinType2",
+    "BsmtFinSF2",
+    "BsmtUnfSF",
+    "TotalBsmtSF",
+    "Heating",
+    "HeatingQC",
+    "CentralAir",
+    "Electrical",
+    "1stFlrSF",
+    "2ndFlrSF",
+    "LowQualFinSF",
+    "GrLivArea",
+    "BsmtFullBath",
+    "BsmtHalfBath",
+    "FullBath",
+    "HalfBath",
+    "BedroomAbvGr",
+    "KitchenAbvGr",
+    "KitchenQual",
+    "TotRmsAbvGrd",
+    "Functional",
+    "Fireplaces",
+    "FireplaceQu",
+    "GarageType",
+    "GarageYrBlt",
+    "GarageFinish",
+    "GarageCars",
+    "GarageArea",
+    "GarageQual",
+    "GarageCond",
+    "PavedDrive",
+    "WoodDeckSF",
+    "OpenPorchSF",
+    "EnclosedPorch",
+    "3SsnPorch",
+    "ScreenPorch",
+    "PoolArea",
+    "PoolQC",
+    "Fence",
+    "MiscFeature",
+    "MiscVal",
+    "MoSold",
+    "YrSold",
+    "SaleType",
+    "SaleCondition"
+  ],
+  "id_column": "Id",
+  "validation": "random",
+  "group_column": null,
+  "time_column": null,
+  "validation_size": 0.2,
+  "seed": 42,
+  "metrics": [
+    "log_rmse",
+    "mae",
+    "rmse",
+    "r2"
+  ],
+  "average": null,
+  "positive_label": null,
+  "models": [
+    "ridge",
+    "random_forest",
+    "catboost"
+  ],
+  "model_params": {
+    "ridge": {
+      "alpha": 10.0,
+      "solver": "lsqr"
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "min_samples_leaf": 2
+    },
+    "catboost": {
+      "iterations": 600,
+      "depth": 6,
+      "learning_rate": 0.05
+    }
+  },
+  "read_options": {
+    "keep_default_na": false,
+    "na_values": {
+      "Id": [
+        "NA",
+        ""
+      ],
+      "MSSubClass": [
+        "NA",
+        ""
+      ],
+      "MSZoning": [
+        "NA",
+        ""
+      ],
+      "LotFrontage": [
+        "NA",
+        ""
+      ],
+      "LotArea": [
+        "NA",
+        ""
+      ],
+      "Street": [
+        "NA",
+        ""
+      ],
+      "Alley": [
+        ""
+      ],
+      "LotShape": [
+        "NA",
+        ""
+      ],
+      "LandContour": [
+        "NA",
+        ""
+      ],
+      "Utilities": [
+        "NA",
+        ""
+      ],
+      "LotConfig": [
+        "NA",
+        ""
+      ],
+      "LandSlope": [
+        "NA",
+        ""
+      ],
+      "Neighborhood": [
+        "NA",
+        ""
+      ],
+      "Condition1": [
+        "NA",
+        ""
+      ],
+      "Condition2": [
+        "NA",
+        ""
+      ],
+      "BldgType": [
+        "NA",
+        ""
+      ],
+      "HouseStyle": [
+        "NA",
+        ""
+      ],
+      "OverallQual": [
+        "NA",
+        ""
+      ],
+      "OverallCond": [
+        "NA",
+        ""
+      ],
+      "YearBuilt": [
+        "NA",
+        ""
+      ],
+      "YearRemodAdd": [
+        "NA",
+        ""
+      ],
+      "RoofStyle": [
+        "NA",
+        ""
+      ],
+      "RoofMatl": [
+        "NA",
+        ""
+      ],
+      "Exterior1st": [
+        "NA",
+        ""
+      ],
+      "Exterior2nd": [
+        "NA",
+        ""
+      ],
+      "MasVnrType": [
+        "NA",
+        ""
+      ],
+      "MasVnrArea": [
+        "NA",
+        ""
+      ],
+      "ExterQual": [
+        "NA",
+        ""
+      ],
+      "ExterCond": [
+        "NA",
+        ""
+      ],
+      "Foundation": [
+        "NA",
+        ""
+      ],
+      "BsmtQual": [
+        ""
+      ],
+      "BsmtCond": [
+        ""
+      ],
+      "BsmtExposure": [
+        ""
+      ],
+      "BsmtFinType1": [
+        ""
+      ],
+      "BsmtFinSF1": [
+        "NA",
+        ""
+      ],
+      "BsmtFinType2": [
+        ""
+      ],
+      "BsmtFinSF2": [
+        "NA",
+        ""
+      ],
+      "BsmtUnfSF": [
+        "NA",
+        ""
+      ],
+      "TotalBsmtSF": [
+        "NA",
+        ""
+      ],
+      "Heating": [
+        "NA",
+        ""
+      ],
+      "HeatingQC": [
+        "NA",
+        ""
+      ],
+      "CentralAir": [
+        "NA",
+        ""
+      ],
+      "Electrical": [
+        "NA",
+        ""
+      ],
+      "1stFlrSF": [
+        "NA",
+        ""
+      ],
+      "2ndFlrSF": [
+        "NA",
+        ""
+      ],
+      "LowQualFinSF": [
+        "NA",
+        ""
+      ],
+      "GrLivArea": [
+        "NA",
+        ""
+      ],
+      "BsmtFullBath": [
+        "NA",
+        ""
+      ],
+      "BsmtHalfBath": [
+        "NA",
+        ""
+      ],
+      "FullBath": [
+        "NA",
+        ""
+      ],
+      "HalfBath": [
+        "NA",
+        ""
+      ],
+      "BedroomAbvGr": [
+        "NA",
+        ""
+      ],
+      "KitchenAbvGr": [
+        "NA",
+        ""
+      ],
+      "KitchenQual": [
+        "NA",
+        ""
+      ],
+      "TotRmsAbvGrd": [
+        "NA",
+        ""
+      ],
+      "Functional": [
+        "NA",
+        ""
+      ],
+      "Fireplaces": [
+        "NA",
+        ""
+      ],
+      "FireplaceQu": [
+        ""
+      ],
+      "GarageType": [
+        ""
+      ],
+      "GarageYrBlt": [
+        "NA",
+        ""
+      ],
+      "GarageFinish": [
+        ""
+      ],
+      "GarageCars": [
+        "NA",
+        ""
+      ],
+      "GarageArea": [
+        "NA",
+        ""
+      ],
+      "GarageQual": [
+        ""
+      ],
+      "GarageCond": [
+        ""
+      ],
+      "PavedDrive": [
+        "NA",
+        ""
+      ],
+      "WoodDeckSF": [
+        "NA",
+        ""
+      ],
+      "OpenPorchSF": [
+        "NA",
+        ""
+      ],
+      "EnclosedPorch": [
+        "NA",
+        ""
+      ],
+      "3SsnPorch": [
+        "NA",
+        ""
+      ],
+      "ScreenPorch": [
+        "NA",
+        ""
+      ],
+      "PoolArea": [
+        "NA",
+        ""
+      ],
+      "PoolQC": [
+        ""
+      ],
+      "Fence": [
+        ""
+      ],
+      "MiscFeature": [
+        ""
+      ],
+      "MiscVal": [
+        "NA",
+        ""
+      ],
+      "MoSold": [
+        "NA",
+        ""
+      ],
+      "YrSold": [
+        "NA",
+        ""
+      ],
+      "SaleType": [
+        "NA",
+        ""
+      ],
+      "SaleCondition": [
+        "NA",
+        ""
+      ],
+      "SalePrice": [
+        "NA",
+        ""
+      ]
+    },
+    "dtype": {
+      "MSSubClass": "string",
+      "MoSold": "string"
+    }
+  },
+  "output_dir": "outputs/educational/house_prices/experiments",
+  "data_kind": "real",
+  "target_transform": "log"
+}

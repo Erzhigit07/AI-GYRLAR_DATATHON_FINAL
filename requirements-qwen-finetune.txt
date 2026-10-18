@@ -1,0 +1,7 @@
+# Separate cloud environment only. Install PyTorch from its official cu126 index first.
+# python -m pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu126
+transformers==4.57.6
+peft==0.17.1
+accelerate==1.11.0
+bitsandbytes==0.48.1
+Pillow==12.1.0

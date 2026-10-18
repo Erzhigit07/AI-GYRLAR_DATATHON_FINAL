@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-10-18T05:34:06.474313+00:00",
+  "status": "PASS",
+  "endpoint": "GET /api/v1/jobs/{job_id}/explanation",
+  "tests": {
+    "passed": 203,
+    "failed": 0,
+    "elapsed_sec": 13.98,
+    "new_xai_cases": 15,
+    "scope": "test_explanations, test_api, test_evidence, test_local_analyzer, test_service, test_contracts, test_qwen_baseline, test_qwen_runner",
+    "data": "synthetic_only",
+    "ruff": "PASS"
+  },
+  "unchanged_model_checks": {
+    "experiment_config_sha256": true,
+    "weights_manifest_sha256": true,
+    "verified_weights_sha256": true,
+    "runner_sha256": true,
+    "parser_sha256": true
+  },
+  "live_local_api_check": {
+    "status": "PASS",
+    "checked_at_utc": "2026-10-18T05:33:16.066432+00:00",
+    "data": "previously_exposed_development_video_17",
+    "real_violation_accuracy": "NOT_EVALUATED",
+    "model_changed": false,
+    "training_started": false,
+    "elapsed_sec": 13.218,
+    "verdict": "no_violation",
+    "window_count": 3,
+    "positive_windows": 0,
+    "explanation_status": "available",
+    "source_sha256": "dddc2c907160ae8cca155b2e98964e8380128eb47101bfcf56e4c3b73af7a422",
+    "health": {
+      "status": "ok",
+      "model_ready": true
+    }
+  },
+  "prior_synthetic_live_probe": {
+    "status": "failed",
+    "code": "invalid_result",
+    "data": "solid_color_frames",
+    "incorrectly_converted_to_no_violation": false,
+    "cause": "NOT_VERIFIED"
+  },
+  "frontend_changed_by_this_task": false,
+  "cloud_used": false,
+  "trained_model_changed": false,
+  "real_violation_accuracy": "NOT_EVALUATED",
+  "context_positive_path": "verified_on_synthetic_video_tests",
+  "files_sha256": {
+    "src/forte/api.py": "dd4d1c68c071956f52738ad3c28f7fd911a365104ceb3b5784e5d19761a28c04",
+    "src/forte/evidence.py": "5b42056ce2ddf4009bf2e1751836384eb6527c548c4d324c84a452123229da74",
+    "src/forte/explanations.py": "292eb6d7f1c5dab9dbef0cc40ced514a9bfb000f55e74a6427173c96daa8d724",
+    "src/forte/jobs.py": "e0b6fb8361030b44e2cefa39b65aeb6d87d76d3229a1b53ca9b473a3031f3b65",
+    "src/forte/local_analyzer.py": "47fcf49019896602ad4e87d3fc8014341fc931e69f15f0aa991cf94b24085dce",
+    "tests/forte/test_explanations.py": "307817b0a9377882ed997fc1ea545ccf39b6e94a86adf6f3605106331a285066",
+    "tests/forte/test_local_analyzer.py": "3a7226efba184c1aa389c3cbe8f857aafb89b8a789b992cee64f1eac2d8935e8",
+    "docs/forte_explainability.md": "ed19a6c65bf3f41cbb1e760369e8ebe36c8f64f25b9edba95e7565fa73bb907a"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "status": "VERIFIED_DEVELOPMENT_COMPARISON_NOT_PRODUCTION_READY",
+  "created_at_utc": "2026-10-18T00:26:02.209014+00:00",
+  "runs": [
+    {
+      "experiment_id": "20261017T234500Z-schema-v2",
+      "finished_at_utc": "2026-10-17T23:59:09.627260+00:00",
+      "dataset_manifest_sha256": "cbec03b42b2be751049e4217b2f9dbea271f4ff8feaf5caef5ce4704cdd7f295",
+      "split": "development",
+      "selected": 32,
+      "completed": 32,
+      "coverage": 1.0,
+      "model": "Qwen3-VL-2B-Instruct",
+      "model_revision": "52d6c8ffea26cc873ac5ad116f8631268d7eb503",
+      "quantization": "Q4_K_M + vision Q8_0",
+      "output_contract_version": 2,
+      "sample_step_sec": 0.5,
+      "frames_per_window": 16,
+      "overlap_frames": 2,
+      "overview_frames": 16,
+      "seed": 2026,
+      "TP": 1,
+      "TN": 15,
+      "FP": 0,
+      "FN": 16,
+      "precision": 1.0,
+      "recall": 0.058823529411764705,
+      "f1": 0.1111111111111111,
+      "accuracy": 0.5,
+      "wall_sec": 795.8600000000006,
+      "model_requests": 194,
+      "config_sha256": "cc1f0f143881874b52577e69df53fab37cd5bac661691cc8e015c2fe8cfdc502",
+      "prompt_sha256": "9793a47b9decbca912c4062fdd772e1046af61b89bd4b84d051c26a912b2a762",
+      "rules_sha256": "b48a137029da8610b57909f6035e9cb79d1c8f300a9e711845ee41f35bd73f61",
+      "status": "FINISHED",
+      "metric_scope": "internal clip-level binary diagnostics; official temporal metric NOT EVALUATED",
+      "limitations": "non-independent development32; only two rules; no holdout; no weight training; overlap6 prompt still describes overlap2"
+    },
+    {
+      "experiment_id": "20261018T000520Z-overlap6-candidate",
+      "finished_at_utc": "2026-10-18T00:24:37.102784+00:00",
+      "dataset_manifest_sha256": "cbec03b42b2be751049e4217b2f9dbea271f4ff8feaf5caef5ce4704cdd7f295",
+      "split": "development",
+      "selected": 32,
+      "completed": 32,
+      "coverage": 1.0,
+      "model": "Qwen3-VL-2B-Instruct",
+      "model_revision": "52d6c8ffea26cc873ac5ad116f8631268d7eb503",
+      "quantization": "Q4_K_M + vision Q8_0",
+      "output_contract_version": 2,
+      "sample_step_sec": 0.5,
+      "frames_per_window": 16,
+      "overlap_frames": 6,
+      "overview_frames": 16,
+      "seed": 2026,
+      "TP": 2,
+      "TN": 14,
+      "FP": 1,
+      "FN": 15,
+      "precision": 0.6666666666666666,
+      "recall": 0.11764705882352941,
+      "f1": 0.2,
+      "accuracy": 0.5,
+      "wall_sec": 995.5939999999973,
+      "model_requests": 239,
+      "config_sha256": "44725e54253c5f12f8fec51a6f96def725d9dafe9ef8f2c7e5d754120be766a3",
+      "prompt_sha256": "9793a47b9decbca912c4062fdd772e1046af61b89bd4b84d051c26a912b2a762",
+      "rules_sha256": "b48a137029da8610b57909f6035e9cb79d1c8f300a9e711845ee41f35bd73f61",
+      "status": "FINISHED",
+      "metric_scope": "internal clip-level binary diagnostics; official temporal metric NOT EVALUATED",
+      "limitations": "non-independent development32; only two rules; no holdout; no weight training; overlap6 prompt still describes overlap2"
+    }
+  ],
+  "paired_outcomes": {
+    "common_completed_count": 32,
+    "scores_on_common_completed_only": {
+      "baseline": {
+        "count": 32,
+        "confusion": {
+          "TP": 1,
+          "TN": 15,
+          "FP": 0,
+          "FN": 16
+        },
+        "accuracy": 0.5,
+        "precision": 1.0,
+        "recall": 0.058823529411764705,
+        "f1": 0.1111111111111111
+      },
+      "candidate": {
+        "count": 32,
+        "confusion": {
+          "TP": 2,
+          "TN": 14,
+          "FP": 1,
+          "FN": 15
+        },
+        "accuracy": 0.5,
+        "precision": 0.6666666666666666,
+        "recall": 0.11764705882352941,
+        "f1": 0.2
+      }
+    },
+    "common_completed_delta_candidate_minus_baseline": {
+      "accuracy": 0.0,
+      "precision": -0.33333333333333337,
+      "recall": 0.058823529411764705,
+      "f1": 0.0888888888888889
+    },
+    "prediction_transitions": {
+      "FN_to_TP": 2,
+      "TP_to_FN": 1,
+      "TN_to_FP": 1,
+      "FP_to_TN": 0,
+      "FN_unchanged": 14,
+      "TP_unchanged": 0,
+      "TN_unchanged": 14,
+      "FP_unchanged": 0
+    },
+    "outcome_status_transitions": {
+      "complete_to_complete": 32
+    }
+  },
+  "frame_comparison": {
+    "selected": 32,
+    "compared": 32,
+    "identical": 32,
+    "mismatched": 0,
+    "missing_baseline": 0,
+    "missing_candidate": 0,
+    "timestamp_mismatch": 0,
+    "jpeg_hash_mismatch": 0,
+    "frame_count_mismatch": 0,
+    "image_size_mismatch": 0
+  },
+  "unique_frames_each_run": 2122,
+  "request_increase": 45,
+  "wall_time_change_percent": 25.096625034553387,
+  "actual_runtime_checks": {
+    "runner_exit_code": 0,
+    "independent_recalculation": "PASS",
+    "paired_comparison": "PASS",
+    "final_integrity": "PASS",
+    "239_response_contracts": "PASS",
+    "holdout_run": false
+  },
+  "memory": {
+    "min_available_ram_gib": 0.4193916320800781,
+    "peak_server_rss_gib": 1.5081672668457031,
+    "scope": "Sampled system available RAM and one server process RSS; not total memory usage or GPU VRAM peak."
+  },
+  "interpretation_ru": "На том же development F1 вырос 0.1111→0.2 и recall 1/17→2/17, но прежний единственный TP потерян, добавлены два новых TP и один FP. Пропущены 15/17 нарушений; качества для самостоятельного применения недостаточно. Более высокие F1/recall не означают доказанного обобщения.",
+  "decision_ru": "Кандидат сохранён для анализа, автоматически не принят; active pointer оставлен на schema-v2. Следующий шаг — локальный аудит покрытия двух правил и ошибок объектов/действий/порядка, без повторного обучения вслепую.",
+  "limitations": [
+    "The candidate uses six overlapping frames while the intentionally byte-identical frozen prompt still describes two. The effect of this known protocol-text mismatch is unverified.",
+    "Accuracy, precision, recall and F1 cover completed predictions only; failures, missing outcomes and partial results are never negative predictions.",
+    "When coverage differs, paired metrics are restricted to the common completed subset; this selective subset cannot replace full-development performance and failure rates.",
+    "Frame equivalence uses saved timestamps, JPEG hashes and sizes, not new video decoding or proof of semantic visibility.",
+    "Development is not independent; five videos have known previous context. Holdout was not inferred.",
+    "Only two fixed observable criteria are covered. No weights were trained and no official temporal score is evaluated.",
+    "A nominal local window spans about 7.5 seconds, and requests have no memory of preceding windows. Overlap six shifts window boundaries; its windows are not nested supersets of the old windows, so some context can be lost as well as gained.",
+    "A plus/minus-two-second context threshold is a diagnostic heuristic, not an official criterion, necessary condition or established explanation of false negatives. This helper does not recalculate that context heuristic or predict recall from it.",
+    "Prior post-hoc annotation-time counts can exceed the number of false-negative videos because duplicate aliases have different timestamps; actual prior aggregate counts are included separately when that artifact exists.",
+    "The candidate is not accepted automatically or on a selectively completed subset; conclusions about the full development set require all 32 paired outcomes and explicit coverage."
+  ],
+  "arithmetic_reference": {
+    "always_positive_f1": 0.6938775510204082,
+    "always_positive_recall": 1.0,
+    "always_positive_false_positives": 15,
+    "model_run": false,
+    "purpose": "Recall alone is insufficient; this is arithmetic on the 32 labels, not a trained system."
+  },
+  "frozen_archive": "outputs/forte-local/20261017-qwen/violation-baseline-support/frozen-run-archives/20261018-overlap-comparison",
+  "archive_launch_verified": false,
+  "no_datasets_frames_predictions_or_private_descriptions_in_public_report": true
+}

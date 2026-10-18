@@ -1,0 +1,7 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+# Frozen experiment inputs are checked byte-for-byte at service startup.
+configs/forte_deployment/** -text whitespace=cr-at-eol

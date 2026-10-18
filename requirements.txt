@@ -1,0 +1,13 @@
+# Python 3.11 / 3.12. Direct dependencies; runtime versions are saved with each run.
+numpy==2.2.6
+pandas==2.2.3
+scipy==1.15.3
+scikit-learn==1.6.1
+matplotlib==3.10.3
+# Compatible parser version for this matplotlib release.
+pyparsing==3.2.3
+openpyxl==3.1.5
+pyarrow==20.0.0
+charset-normalizer==3.4.2
+joblib==1.5.1
+jupyterlab==4.4.3

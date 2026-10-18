@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-10-18T06:29:14.380846+00:00",
+  "model": "Qwen3-VL-2B-Instruct Q4_K_M + vision Q8_0",
+  "mode": "model_and_examples",
+  "health": {
+    "status": "ok",
+    "model_ready": true,
+    "manual_examples_available": true
+  },
+  "rules": [
+    "prior_customer_cash_exposed",
+    "cashier_leaves_active_service"
+  ],
+  "checks": [
+    {
+      "verdict": "violation",
+      "elapsed_sec": 66.047,
+      "completed_windows": 15,
+      "positive_windows": 1,
+      "explanation_status": "available",
+      "check_number": 1,
+      "event_count": 1
+    },
+    {
+      "verdict": "no_violation",
+      "elapsed_sec": 25.421,
+      "completed_windows": 6,
+      "positive_windows": 0,
+      "explanation_status": "available",
+      "check_number": 2,
+      "event_count": 0
+    }
+  ],
+  "manual_examples_preserved": 4,
+  "available_ram_gib": 0.68,
+  "start_ram_threshold_gib": 1.75,
+  "runtime_low_ram_guard_gib": 0.25,
+  "restored_experiment_config": "outputs/forte-service/deployments/20261018/20261018T000520Z-overlap6-candidate/config.json",
+  "config_sha256": "761a4c97673e554527924be8e6a859aed8ee65475fa5ea3a48dd6130b75071c7",
+  "weights_changed": false,
+  "training_run": false,
+  "quality_scope": "Two previously exposed selected operational checks, not an independent quality estimate. Original labels not used. Event times and descriptions are model predictions requiring review.",
+  "publication_note": "Operational results only; private video identifiers and event descriptions omitted."
+}
